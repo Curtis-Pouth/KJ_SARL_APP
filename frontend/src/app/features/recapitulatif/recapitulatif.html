@@ -1,0 +1,22 @@
+<div class="max-w-5xl mx-auto mt-10 p-6 space-y-6">
+  <h2 class="text-2xl font-semibold text-[var(--color-secondary)]">Récapitulatif par catégorie</h2>
+
+  @if (chargement()) {
+    <p class="text-[var(--color-text-muted)]">Chargement...</p>
+  } @else if (erreur()) {
+    <p class="text-red-600">{{ erreur() }}</p>
+  } @else {
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      @for (carte of cartes(); track carte.categorie) {
+        
+          <a [routerLink]="['/recapitulatif', carte.categorie]"
+          class="block bg-[var(--color-secondary)] hover:bg-[var(--color-secondary-dark)]
+                 text-white rounded-xl shadow-md p-5 text-center transition-colors cursor-pointer">
+          <p class="text-3xl mb-1">{{ carte.icone }}</p>
+          <p class="text-2xl font-bold text-[var(--color-primary)]">{{ carte.nombre }}</p>
+          <p class="text-sm text-white/80">{{ carte.libelle }}</p>
+        </a>
+      }
+    </div>
+  }
+</div>

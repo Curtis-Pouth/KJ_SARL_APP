@@ -1,0 +1,138 @@
+<div class="max-w-6xl mx-auto mt-10 p-6 space-y-6">
+  <h2 class="text-2xl font-semibold text-[var(--color-secondary)]">Facturation</h2>
+
+  @if (message()) {
+    <div class="bg-green-50 border border-green-200 text-green-700 rounded-md p-4">{{ message() }}</div>
+  }
+  @if (erreur()) {
+    <div class="bg-red-50 border border-red-200 text-red-700 rounded-md p-4">{{ erreur() }}</div>
+  }
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-2 space-y-6">
+      <div class="bg-white rounded-xl shadow-md p-6">
+        <label class="text-sm font-semibold text-[var(--color-text-muted)] mb-1 block">Nom du client</label>
+        <div class="relative">
+          <input
+            type="text"
+            [(ngModel)]="rechercheClient"
+            (ngModelChange)="onRechercheClientChange()"
+            placeholder="Tapez le nom du client..."
+            class="w-full px-3 py-2 border border-[var(--color-border-soft)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30 focus:border-[var(--color-primary)]"
+          />
+          @if (clientsTrouves().length > 0) {
+            <ul class="absolute z-10 w-full bg-white border border-[var(--color-border-soft)] rounded-md shadow-lg mt-1 max-h-48 overflow-y-auto">
+              @for (client of clientsTrouves(); track client.id) {
+                <li
+                  (click)="selectionnerClient(client)"
+                  class="px-3 py-2 text-sm hover:bg-[var(--color-bg-alt)] cursor-pointer"
+                >
+                  {{ client.nom }} <span class="text-[var(--color-text-muted)]">({{ client.email }})</span>
+                </li>
+              }
+            </ul>
+          }
+        </div>
+        @if (clientSelectionne()) {
+          <p class="text-sm text-green-700 mt-2">Client selectionne : {{ clientSelectionne()!.nom }}</p>
+        }
+      </div>
+
+      <div class="bg-white rounded-xl shadow-md p-6">
+        <label class="text-sm font-semibold text-[var(--color-text-muted)] mb-1 block">Rechercher un produit</label>
+        <input
+          type="text"
+          [(ngModel)]="filtreProduit"
+          placeholder="Tapez une lettre pour filtrer..."
+          class="w-full px-3 py-2 mb-4 border border-[var(--color-border-soft)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30 focus:border-[var(--color-primary)]"
+        />
+
+        @if (chargementProduits()) {
+          <p class="text-[var(--color-text-muted)] text-sm">Chargement...</p>
+        } @else {
+          <div class="max-h-80 overflow-y-auto space-y-1">
+            @for (produit of produitsFiltres(); track produit.id) {
+              <div
+                class="flex items-center justify-between px-3 py-2 rounded-md"
+                [class.bg-red-50]="produit.stock_epuise"
+                [class.hover:bg-gray-50]="!produit.stock_epuise"
+              >
+                <div>
+                  <span class="text-sm font-medium">{{ produit.libelle }}</span>
+                  <span class="text-xs text-[var(--color-text-muted)] ml-2">{{ produit.prix_unitaire }} FCFA</span>
+                  @if (produit.stock_epuise) {
+                    <span class="ml-2 text-xs px-2 py-0.5 rounded-full bg-red-100 text-red-700">Stock epuise</span>
+                  }
+                </div>
+                <button
+                  (click)="ajouterLigne(produit)"
+                  [disabled]="produit.stock_epuise"
+                  class="px-3 py-1 rounded-md text-xs font-medium text-white bg-[var(--color-secondary)] hover:bg-[var(--color-secondary-dark)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                >
+                  Ajouter{{ quantiteDansLignes(produit.id) > 0 ? ' (' + quantiteDansLignes(produit.id) + ')' : '' }}
+                </button>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="space-y-6">
+      <div class="bg-white rounded-xl shadow-md p-6">
+        <h3 class="text-lg font-medium text-[var(--color-text)] mb-4">Articles selectionnes</h3>
+
+        @if (lignes().length === 0) {
+          <p class="text-sm text-[var(--color-text-muted)]">Aucun produit selectionne.</p>
+        } @else {
+          <div class="space-y-2 mb-4">
+            @for (ligne of lignes(); track ligne.produit.id) {
+              <div class="flex items-center justify-between text-sm border-b border-[var(--color-border-soft)] pb-2">
+                <span class="flex-1">{{ ligne.produit.libelle }}</span>
+                <input
+                  type="number"
+                  min="1"
+                  [ngModel]="ligne.quantite"
+                  (ngModelChange)="modifierQuantiteLigne(ligne.produit.id, $event)"
+                  class="w-14 px-1 py-0.5 border border-[var(--color-border-soft)] rounded text-center mx-2"
+                />
+                <button (click)="retirerLigne(ligne.produit.id)" class="text-red-600 hover:text-red-800 text-xs">X</button>
+              </div>
+            }
+          </div>
+        }
+
+        <div class="text-sm space-y-1 border-t border-[var(--color-border-soft)] pt-3">
+          <div class="flex justify-between"><span>Montant HT</span><span>{{ montantHt() }} FCFA</span></div>
+          <div class="flex justify-between text-[var(--color-text-muted)]"><span>Ristourne (2%)</span><span>- {{ ristourne() }} FCFA</span></div>
+          <div class="flex justify-between font-bold text-[var(--color-secondary)] text-base"><span>Montant TTC</span><span>{{ montantTtc() }} FCFA</span></div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-md p-6">
+        <h3 class="text-lg font-medium text-[var(--color-text)] mb-4">Methode de paiement</h3>
+
+        <label class="text-xs font-semibold text-[var(--color-text-muted)]">MTN Mobile Money</label>
+        <input type="number" [(ngModel)]="montantMtn" placeholder="0" class="w-full px-3 py-2 mb-3 border border-[var(--color-border-soft)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30 focus:border-[var(--color-primary)]" />
+
+        <label class="text-xs font-semibold text-[var(--color-text-muted)]">Orange Money</label>
+        <input type="number" [(ngModel)]="montantOrange" placeholder="0" class="w-full px-3 py-2 mb-3 border border-[var(--color-border-soft)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30 focus:border-[var(--color-primary)]" />
+
+        <label class="text-xs font-semibold text-[var(--color-text-muted)]">Caisse (especes)</label>
+        <input type="number" [(ngModel)]="montantCaisse" placeholder="0" class="w-full px-3 py-2 mb-3 border border-[var(--color-border-soft)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30 focus:border-[var(--color-primary)]" />
+
+        <p class="text-xs text-[var(--color-text-muted)] mb-4">
+          Total saisi : {{ totalPaiementSaisi() }} FCFA (doit egaler {{ montantTtc() }} FCFA)
+        </p>
+
+        <button
+          (click)="soumettre()"
+          [disabled]="chargement()"
+          class="w-full py-2.5 rounded-md font-semibold text-white bg-[var(--color-secondary)] hover:bg-[var(--color-secondary-dark)] disabled:opacity-60 transition-colors"
+        >
+          {{ chargement() ? 'Enregistrement...' : 'Enregistrer la facture' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

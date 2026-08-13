@@ -1,0 +1,23 @@
+<header class="h-16 bg-white border-b border-[var(--color-border-soft)] flex items-center justify-between px-6 shadow-sm">
+  <div class="flex items-center gap-3">
+    <div class="relative w-9 h-9 rounded-full bg-[var(--color-secondary)] flex items-center justify-center overflow-hidden shrink-0">
+      <span class="text-white text-xs font-bold">KJ</span>
+      <img src="logo-kj-sarl.png" alt="KJ SARL" class="absolute inset-0 w-full h-full object-contain bg-white" onerror="this.style.display='none'" />
+    </div>
+    <div class="leading-tight">
+      <p class="font-bold text-[var(--color-secondary)] text-sm tracking-wide">K.J SARL</p>
+      <p class="text-[10px] text-[var(--color-text-muted)]">Votre satisfaction, notre plaisir</p>
+    </div>
+  </div>
+
+  <p class="hidden sm:block text-sm text-[var(--color-text-muted)] capitalize">{{ dateDuJour }}</p>
+
+  <div class="flex items-center gap-2">
+    <span class="w-8 h-8 rounded-full bg-[var(--color-primary)] text-white flex items-center justify-center text-sm font-semibold">
+      {{ (authService.currentUser()?.nom || authService.currentUser()?.email || '?').charAt(0).toUpperCase() }}
+    </span>
+    <span class="text-sm font-medium text-[var(--color-text)] hidden md:inline">
+      {{ authService.currentUser()?.nom || authService.currentUser()?.email }}
+    </span>
+  </div>
+</header>

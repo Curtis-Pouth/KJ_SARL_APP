@@ -1,0 +1,21 @@
+@import "tailwindcss";
+@source "./app/**/*.{html,ts}";
+
+@theme {
+  --color-primary: #D4972E;
+  --color-primary-dark: #B87F1F;
+  --color-primary-light: #F0C878;
+
+  --color-secondary: #5C1A1A;
+  --color-secondary-dark: #3D1010;
+  --color-secondary-light: #8C3A3A;
+
+  --color-text: #1A1A1A;
+  --color-text-muted: #6B6B6B;
+  --color-bg-alt: #FAF6EF;
+  --color-border-soft: #E5DCC8;
+}
+
+body {
+  @apply bg-[var(--color-bg-alt)] text-[var(--color-text)];
+}

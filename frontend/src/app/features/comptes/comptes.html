@@ -1,0 +1,21 @@
+<div class="max-w-4xl mx-auto mt-10 p-6">
+  <h2 class="text-2xl font-semibold text-[var(--color-secondary)] mb-6">Comptes de l'entreprise</h2>
+
+  @if (chargement()) {
+    <p class="text-[var(--color-text-muted)]">Chargement...</p>
+  } @else if (erreur()) {
+    <p class="text-red-600">{{ erreur() }}</p>
+  } @else {
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      @for (compte of comptes(); track compte.id) {
+        <div class="bg-white rounded-xl shadow-md border-t-4 border-[var(--color-primary)] p-6 text-center">
+          <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-[var(--color-secondary)] text-white flex items-center justify-center font-bold text-sm">
+            {{ icone(compte.nom) }}
+          </div>
+          <p class="text-sm text-[var(--color-text-muted)] mb-1">{{ compte.nom_affiche }}</p>
+          <p class="text-2xl font-bold text-[var(--color-secondary)]">{{ compte.solde }} FCFA</p>
+        </div>
+      }
+    </div>
+  }
+</div>

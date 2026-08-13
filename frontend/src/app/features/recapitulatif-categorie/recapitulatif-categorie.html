@@ -1,0 +1,47 @@
+<div class="max-w-4xl mx-auto mt-10 p-6 space-y-4">
+  <a routerLink="/recapitulatif" class="text-sm text-[var(--color-secondary)] hover:underline">
+    ← Retour au récapitulatif
+  </a>
+
+  <div class="flex items-center justify-between">
+    <h2 class="text-2xl font-semibold text-[var(--color-secondary)]">
+      Récapitulatif — {{ libelleCategorie() }}
+    </h2>
+    @if (!chargement() && !erreur()) {
+      <span class="text-sm text-[var(--color-text-muted)]">
+        {{ produits().length }} produit(s) — {{ quantiteTotale() }} unités en stock
+      </span>
+    }
+  </div>
+
+  <div class="bg-white rounded-xl shadow-md overflow-hidden">
+    @if (chargement()) {
+      <p class="p-6 text-[var(--color-text-muted)]">Chargement...</p>
+    } @else if (erreur()) {
+      <p class="p-6 text-red-600">{{ erreur() }}</p>
+    } @else if (produits().length === 0) {
+      <p class="p-6 text-[var(--color-text-muted)]">
+        Aucun produit enregistré dans cette catégorie.
+      </p>
+    } @else {
+      <table class="w-full text-left">
+        <thead class="bg-[var(--color-primary)] text-[var(--color-text)]">
+          <tr>
+            <th class="px-4 py-3">Libellé</th>
+            <th class="px-4 py-3">Quantité en stock</th>
+            <th class="px-4 py-3">Prix unitaire</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (produit of produits(); track produit.id) {
+            <tr class="border-b border-[var(--color-border-soft)] even:bg-[var(--color-bg-alt)]">
+              <td class="px-4 py-2.5">{{ produit.libelle }}</td>
+              <td class="px-4 py-2.5">{{ produit.quantite_en_stock }}</td>
+              <td class="px-4 py-2.5">{{ produit.prix_unitaire }} FCFA</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+</div>

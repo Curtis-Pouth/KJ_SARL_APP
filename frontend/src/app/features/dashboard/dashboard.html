@@ -1,0 +1,59 @@
+<div class="p-6 space-y-6 bg-stone-100 min-h-screen text-stone-900">
+  <div class="flex items-center justify-between">
+    <h1 class="text-3xl font-bold tracking-tight">Tableau de Bord</h1>
+  </div>
+
+  @if (chargement()) {
+    <div class="p-4 text-stone-500">Chargement des données...</div>
+  } @else if (erreur()) {
+    <div class="p-4 bg-red-100 text-red-700 rounded-lg">{{ erreur() }}</div>
+  } @else {
+    <!-- Cartes par catégorie -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      @for (carte of cartesCategories(); track carte.categorie) {
+        <div class="p-5 bg-white rounded-xl shadow-sm border border-stone-200">
+          <span class="text-sm font-medium text-stone-500">{{ carte.libelle }}</span>
+          <div class="mt-2 text-2xl font-bold">{{ carte.nombre }}</div>
+        </div>
+      }
+    </div>
+
+    <!-- Graphiques / Tops -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+      <div class="p-5 bg-white rounded-xl shadow-sm border border-stone-200">
+        <h2 class="text-lg font-bold mb-4">Top Boissons Facturées</h2>
+        <div class="space-y-3">
+          @for (item of statistiques()?.top_boissons ?? []; track item.libelle) {
+            <div>
+              <div class="flex justify-between text-sm mb-1">
+                <span>{{ item.libelle }}</span>
+                <span class="font-semibold">{{ item.quantite_facturee }}</span>
+              </div>
+              <div class="w-full bg-stone-100 h-2 rounded-full overflow-hidden">
+                <div class="bg-amber-800 h-full" [style.width.%]="largeurBarre(item.quantite_facturee)"></div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="p-5 bg-white rounded-xl shadow-sm border border-stone-200">
+        <h2 class="text-lg font-bold mb-4">Top Clients</h2>
+        <div class="space-y-3">
+          <!-- Correction ici : track client.client et {{ client.client }} -->
+          @for (client of statistiquesClients()?.top_clients ?? []; track client.client) {
+            <div>
+              <div class="flex justify-between text-sm mb-1">
+                <span>{{ client.client }}</span>
+                <span class="font-semibold">{{ client.montant_total | currency:'XAF' }}</span>
+              </div>
+              <div class="w-full bg-stone-100 h-2 rounded-full overflow-hidden">
+                <div class="bg-stone-800 h-full" [style.width.%]="largeurBarreClient(client.montant_total)"></div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  }
+</div>

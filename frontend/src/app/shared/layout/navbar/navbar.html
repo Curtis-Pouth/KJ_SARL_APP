@@ -1,0 +1,52 @@
+<nav class="w-64 h-full bg-[var(--color-secondary)] text-white flex flex-col shrink-0">
+  <a routerLink="/profile" routerLinkActive="bg-[var(--color-secondary-dark)]"
+     class="flex items-center gap-3 px-5 py-5 border-b border-white/10 hover:bg-[var(--color-secondary-dark)] transition-colors">
+    <span class="w-9 h-9 rounded-full bg-[var(--color-primary)] flex items-center justify-center font-semibold text-sm">P</span>
+    <span class="text-sm font-medium">Mon profil</span>
+  </a>
+
+  <ul class="flex-1 py-4 flex flex-col gap-1">
+    <li>
+      <a routerLink="/dashboard" routerLinkActive="bg-[var(--color-secondary-dark)] border-l-4 border-[var(--color-primary)]"
+         class="flex items-center gap-3 px-5 py-3 text-sm hover:bg-[var(--color-secondary-dark)] transition-colors">
+        Tableau de bord
+      </a>
+    </li>
+     <li>
+        <a routerLink="/magasin"
+        routerLinkActive="bg-[var(--color-secondary-dark)] border-l-4 border-[var(--color-primary)]"
+        class="flex items-center gap-3 px-5 py-3 text-sm hover:bg-[var(--color-secondary-dark)] transition-colors">
+        <span></span> Magasin
+      </a>
+    </li>
+    <li>
+      <a routerLink="/bon-commande" routerLinkActive="bg-[var(--color-secondary-dark)] border-l-4 border-[var(--color-primary)]"
+         class="flex items-center gap-3 px-5 py-3 text-sm hover:bg-[var(--color-secondary-dark)] transition-colors">
+        Faire un bon de commande
+      </a>
+    </li>
+    <li>
+      <a routerLink="/facturation" routerLinkActive="bg-[var(--color-secondary-dark)] border-l-4 border-[var(--color-primary)]"
+         class="flex items-center gap-3 px-5 py-3 text-sm hover:bg-[var(--color-secondary-dark)] transition-colors">
+        Facturation
+      </a>
+    </li>
+    <li>
+        <a routerLink="/comptes" routerLinkActive="bg-[var(--color-secondary-dark)] border-l-4 border-[var(--color-primary)]"
+           class="flex items-center gap-3 px-5 py-3 text-sm hover:bg-[var(--color-secondary-dark)] transition-colors">
+          Comptes
+        </a>
+      </li>
+    <li>
+      <a routerLink="/contacts" routerLinkActive="bg-[var(--color-secondary-dark)] border-l-4 border-[var(--color-primary)]"
+         class="flex items-center gap-3 px-5 py-3 text-sm hover:bg-[var(--color-secondary-dark)] transition-colors">
+        Contacts
+      </a>
+    </li>
+  </ul>
+
+  <button (click)="logout()"
+          class="flex items-center gap-3 px-5 py-4 text-sm border-t border-white/10 hover:bg-[var(--color-secondary-dark)] transition-colors text-left">
+    Deconnexion
+  </button>
+</nav>

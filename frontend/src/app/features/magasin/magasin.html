@@ -1,0 +1,112 @@
+<div class="max-w-5xl mx-auto mt-10 p-6 space-y-6">
+  <div class="flex items-center justify-between">
+    <h2 class="text-2xl font-semibold text-[var(--color-secondary)]">Magasin - Quantites en stock</h2>
+    <a routerLink="/recapitulatif" class="px-4 py-2 rounded-md font-semibold text-white bg-[var(--color-secondary)] hover:bg-[var(--color-secondary-dark)] transition-colors">
+      Recapitulatif
+    </a>
+  </div>
+
+  @if (alerteStockFaible()) {
+    <div class="bg-amber-50 border border-amber-300 text-amber-800 rounded-md p-4 text-sm">
+      {{ alerteStockFaible() }}
+    </div>
+  }
+
+  @if (erreurPhoto()) {
+    <div class="bg-red-50 border border-red-200 text-red-700 rounded-md p-4 text-sm">
+      {{ erreurPhoto() }}
+    </div>
+  }
+
+  <div class="flex items-center gap-3">
+    <input
+      type="text"
+      [(ngModel)]="filtre"
+      placeholder="Rechercher un produit (libelle ou reference)..."
+      class="w-full sm:w-96 px-4 py-2 border border-[var(--color-border-soft)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30 focus:border-[var(--color-primary)]"
+    />
+  </div>
+
+  <div class="bg-white rounded-xl shadow-md overflow-hidden">
+    @if (chargement()) {
+      <p class="p-6 text-[var(--color-text-muted)]">Chargement...</p>
+    } @else if (erreur()) {
+      <p class="p-6 text-red-600">{{ erreur() }}</p>
+    } @else if (produitsFiltres().length === 0) {
+      <p class="p-6 text-[var(--color-text-muted)]">Aucun produit ne correspond a votre recherche.</p>
+    } @else {
+      <table class="w-full text-left">
+        <thead class="bg-[var(--color-primary)] text-[var(--color-text)]">
+          <tr>
+            <th class="px-4 py-3">Photo</th>
+            <th class="px-4 py-3">Reference</th>
+            <th class="px-4 py-3">Libelle</th>
+            <th class="px-4 py-3">Categorie</th>
+            <th class="px-4 py-3">Stock actuel</th>
+            <th class="px-4 py-3">Recharger</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (produit of produitsFiltres(); track produit.id) {
+            <tr class="border-b border-[var(--color-border-soft)] even:bg-[var(--color-bg-alt)]">
+              <td class="px-4 py-2.5">
+                <div class="w-14 h-14 rounded-md bg-[var(--color-bg-alt)] border border-[var(--color-border-soft)] flex items-center justify-center overflow-hidden relative">
+                  @if (produit.photo) {
+                    <img [src]="produit.photo" [alt]="produit.libelle" class="w-full h-full object-cover" />
+                  } @else {
+                    <span class="text-[10px] text-[var(--color-text-muted)] text-center px-1">Pas de photo</span>
+                  }
+                </div>
+                <label class="mt-1 block text-[10px] text-[var(--color-secondary)] hover:underline cursor-pointer">
+                  {{ photoEnCours() === produit.id ? 'Envoi...' : 'Changer' }}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    class="hidden"
+                    [disabled]="photoEnCours() === produit.id"
+                    (change)="onFichierPhotoSelectionne(produit, $event)"
+                  />
+                </label>
+              </td>
+              <td class="px-4 py-2.5 text-xs text-[var(--color-text-muted)]">{{ produit.reference }}</td>
+              <td class="px-4 py-2.5">{{ produit.libelle }}</td>
+              <td class="px-4 py-2.5 capitalize">{{ libelleCategorie(produit.categorie) }}</td>
+              <td class="px-4 py-2.5">
+                <span
+                  class="font-semibold"
+                  [class.text-red-600]="produit.stock_epuise"
+                  [class.text-amber-600]="produit.stock_faible"
+                >
+                  {{ produit.quantite_en_stock }}
+                </span>
+                @if (produit.stock_epuise) {
+                  <span class="ml-2 text-xs px-2 py-0.5 rounded-full bg-red-100 text-red-700">Stock epuise</span>
+                } @else if (produit.stock_faible) {
+                  <span class="ml-2 text-xs px-2 py-0.5 rounded-full bg-amber-100 text-amber-700">Stock faible</span>
+                }
+              </td>
+              <td class="px-4 py-2.5">
+                <div class="flex items-center gap-2">
+                  <input
+                    type="number"
+                    min="1"
+                    placeholder="Qte"
+                    [(ngModel)]="quantitesARecharger[produit.id]"
+                    class="w-20 px-2 py-1 border border-[var(--color-border-soft)] rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30 focus:border-[var(--color-primary)]"
+                  />
+                  <button
+                    (click)="recharger(produit)"
+                    [disabled]="rechargeEnCours() === produit.id"
+                    class="px-3 py-1 rounded-md text-sm font-medium text-white bg-[var(--color-secondary)] hover:bg-[var(--color-secondary-dark)] disabled:opacity-60 transition-colors"
+                  >
+                    {{ rechargeEnCours() === produit.id ? '...' : 'Ajouter' }}
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+</div>

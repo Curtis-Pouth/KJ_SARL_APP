@@ -1,0 +1,67 @@
+<div class="max-w-2xl mx-auto mt-10 p-6 space-y-6">
+  <h2 class="text-2xl font-semibold text-[var(--color-secondary)]">Mon profil</h2>
+
+  <div class="bg-white rounded-xl shadow-md border-t-4 border-[var(--color-primary)] p-8">
+    <h3 class="text-lg font-medium text-[var(--color-text)] mb-4">Informations</h3>
+
+    @if (authService.currentUser(); as utilisateur) {
+      <dl class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+        <div>
+          <dt class="text-[var(--color-text-muted)]">Nom</dt>
+          <dd class="font-medium">{{ utilisateur.nom || '—' }}</dd>
+        </div>
+        <div>
+          <dt class="text-[var(--color-text-muted)]">Email</dt>
+          <dd class="font-medium">{{ utilisateur.email }}</dd>
+        </div>
+        <div>
+          <dt class="text-[var(--color-text-muted)]">Rôle</dt>
+          <dd class="font-medium capitalize">{{ utilisateur.role }}</dd>
+        </div>
+        @if (utilisateur.matricule) {
+          <div>
+            <dt class="text-[var(--color-text-muted)]">Matricule</dt>
+            <dd class="font-medium">{{ utilisateur.matricule }}</dd>
+          </div>
+        }
+      </dl>
+    } @else {
+      <p class="text-[var(--color-text-muted)]">Chargement...</p>
+    }
+  </div>
+
+  <div class="bg-white rounded-xl shadow-md border-t-4 border-[var(--color-primary)] p-8">
+    <h3 class="text-lg font-medium text-[var(--color-text)] mb-4">Changer le mot de passe</h3>
+
+    <form (ngSubmit)="onSubmitChangePassword()" class="flex flex-col gap-1">
+      <label class="text-sm font-semibold text-[var(--color-text-muted)]">Mot de passe actuel</label>
+      <input type="password" name="ancienMotDePasse" [(ngModel)]="ancienMotDePasse" required
+        class="w-full px-3 py-2 mb-4 border border-[var(--color-border-soft)] rounded-md
+               focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30 focus:border-[var(--color-primary)]" />
+
+      <label class="text-sm font-semibold text-[var(--color-text-muted)]">Nouveau mot de passe</label>
+      <input type="password" name="nouveauMotDePasse" [(ngModel)]="nouveauMotDePasse" required minlength="8"
+        class="w-full px-3 py-2 mb-4 border border-[var(--color-border-soft)] rounded-md
+               focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30 focus:border-[var(--color-primary)]" />
+
+      <label class="text-sm font-semibold text-[var(--color-text-muted)]">Confirmer le nouveau mot de passe</label>
+      <input type="password" name="confirmationMotDePasse" [(ngModel)]="confirmationMotDePasse" required minlength="8"
+        class="w-full px-3 py-2 mb-4 border border-[var(--color-border-soft)] rounded-md
+               focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30 focus:border-[var(--color-primary)]" />
+
+      @if (message()) {
+        <p class="text-green-600 text-sm mb-2">{{ message() }}</p>
+      }
+      @if (erreur()) {
+        <p class="text-red-600 text-sm mb-2">{{ erreur() }}</p>
+      }
+
+      <button type="submit" [disabled]="chargement()"
+        class="self-start mt-2 px-6 py-2.5 rounded-md font-semibold text-white
+               bg-[var(--color-secondary)] hover:bg-[var(--color-secondary-dark)]
+               disabled:opacity-60 transition-colors">
+        {{ chargement() ? 'Enregistrement...' : 'Changer le mot de passe' }}
+      </button>
+    </form>
+  </div>
+</div>

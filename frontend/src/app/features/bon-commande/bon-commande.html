@@ -1,0 +1,102 @@
+<div class="max-w-6xl mx-auto mt-10 p-6 space-y-6">
+  <h2 class="text-2xl font-semibold text-[var(--color-secondary)]">Bon de commande - Achat fournisseur (SABC)</h2>
+
+  @if (message()) {
+    <div class="bg-green-50 border border-green-200 text-green-700 rounded-md p-4">{{ message() }}</div>
+  }
+  @if (alertesStockFaible().length > 0) {
+    <div class="bg-amber-50 border border-amber-300 text-amber-800 rounded-md p-4 text-sm">
+      <p class="font-semibold mb-1">Alerte stock faible (toujours sous 50 unites) :</p>
+      <ul class="list-disc list-inside">
+        @for (nom of alertesStockFaible(); track nom) {
+          <li>{{ nom }}</li>
+        }
+      </ul>
+    </div>
+  }
+  @if (erreur()) {
+    <div class="bg-red-50 border border-red-200 text-red-700 rounded-md p-4">{{ erreur() }}</div>
+  }
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-2 bg-white rounded-xl shadow-md p-6">
+      <label class="text-sm font-semibold text-[var(--color-text-muted)] mb-1 block">Rechercher un produit</label>
+      <input
+        type="text"
+        [(ngModel)]="filtreProduit"
+        placeholder="Tapez une lettre pour filtrer..."
+        class="w-full px-3 py-2 mb-4 border border-[var(--color-border-soft)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30 focus:border-[var(--color-primary)]"
+      />
+
+      @if (chargementProduits()) {
+        <p class="text-[var(--color-text-muted)] text-sm">Chargement...</p>
+      } @else {
+        <div class="max-h-96 overflow-y-auto space-y-1">
+          @for (produit of produitsFiltres(); track produit.id) {
+            <div class="flex items-center justify-between px-3 py-2 rounded-md hover:bg-gray-50">
+              <div>
+                <span class="text-sm font-medium">{{ produit.libelle }}</span>
+                <span class="text-xs text-[var(--color-text-muted)] ml-2">Stock actuel : {{ produit.quantite_en_stock }}</span>
+              </div>
+              <button
+                (click)="ajouterLigne(produit)"
+                class="px-3 py-1 rounded-md text-xs font-medium text-white bg-[var(--color-secondary)] hover:bg-[var(--color-secondary-dark)] transition-colors"
+              >
+                Ajouter{{ quantiteDansLignes(produit.id) > 0 ? ' (' + quantiteDansLignes(produit.id) + ')' : '' }}
+              </button>
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    <div class="space-y-6">
+      <div class="bg-white rounded-xl shadow-md p-6">
+        <h3 class="text-lg font-medium text-[var(--color-text)] mb-4">Produits a commander</h3>
+
+        @if (lignes().length === 0) {
+          <p class="text-sm text-[var(--color-text-muted)]">Aucun produit selectionne.</p>
+        } @else {
+          <div class="space-y-2">
+            @for (ligne of lignes(); track ligne.produit.id) {
+              <div class="flex items-center justify-between text-sm border-b border-[var(--color-border-soft)] pb-2">
+                <span class="flex-1">{{ ligne.produit.libelle }}</span>
+                <input
+                  type="number"
+                  min="1"
+                  [ngModel]="ligne.quantite"
+                  (ngModelChange)="modifierQuantiteLigne(ligne.produit.id, $event)"
+                  class="w-14 px-1 py-0.5 border border-[var(--color-border-soft)] rounded text-center mx-2"
+                />
+                <button (click)="retirerLigne(ligne.produit.id)" class="text-red-600 hover:text-red-800 text-xs">X</button>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="bg-white rounded-xl shadow-md p-6">
+        <h3 class="text-lg font-medium text-[var(--color-text)] mb-4">Paiement au fournisseur (SABC)</h3>
+
+        <label class="text-xs font-semibold text-[var(--color-text-muted)]">MTN Mobile Money</label>
+        <input type="number" [(ngModel)]="montantMtn" placeholder="0" class="w-full px-3 py-2 mb-3 border border-[var(--color-border-soft)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30 focus:border-[var(--color-primary)]" />
+
+        <label class="text-xs font-semibold text-[var(--color-text-muted)]">Orange Money</label>
+        <input type="number" [(ngModel)]="montantOrange" placeholder="0" class="w-full px-3 py-2 mb-3 border border-[var(--color-border-soft)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30 focus:border-[var(--color-primary)]" />
+
+        <label class="text-xs font-semibold text-[var(--color-text-muted)]">Caisse (especes)</label>
+        <input type="number" [(ngModel)]="montantCaisse" placeholder="0" class="w-full px-3 py-2 mb-3 border border-[var(--color-border-soft)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30 focus:border-[var(--color-primary)]" />
+
+        <p class="text-xs text-[var(--color-text-muted)] mb-4">Total a payer : {{ montantTotal() }} FCFA</p>
+
+        <button
+          (click)="soumettre()"
+          [disabled]="chargement()"
+          class="w-full py-2.5 rounded-md font-semibold text-white bg-[var(--color-secondary)] hover:bg-[var(--color-secondary-dark)] disabled:opacity-60 transition-colors"
+        >
+          {{ chargement() ? 'Enregistrement...' : 'Valider le bon de commande' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
