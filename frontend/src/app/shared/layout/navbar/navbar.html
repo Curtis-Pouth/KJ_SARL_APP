@@ -1,52 +1,78 @@
-<nav class="w-64 h-full bg-[var(--color-secondary)] text-white flex flex-col shrink-0">
-  <a routerLink="/profile" routerLinkActive="bg-[var(--color-secondary-dark)]"
-     class="flex items-center gap-3 px-5 py-5 border-b border-white/10 hover:bg-[var(--color-secondary-dark)] transition-colors">
-    <span class="w-9 h-9 rounded-full bg-[var(--color-primary)] flex items-center justify-center font-semibold text-sm">P</span>
-    <span class="text-sm font-medium">Mon profil</span>
+<nav class="app-nav h-full text-white flex flex-col shrink-0">
+  <a routerLink="/profile" routerLinkActive="app-nav-profile-active" class="app-nav-profile flex items-center gap-3 px-5 py-5 border-b border-white/10 hover:bg-white/5 transition-colors">
+    <span class="app-brand-mark">{{ initialesUtilisateur }}</span>
+    <span class="app-nav-profile-label">
+      <span class="block text-[10px] uppercase tracking-[0.18em] text-white/50">
+        {{ isClient ? 'Espace Client' : 'Espace Équipe' }}
+      </span>
+      <span class="block text-sm font-semibold text-white">Mon profil</span>
+    </span>
   </a>
 
-  <ul class="flex-1 py-4 flex flex-col gap-1">
-    <li>
-      <a routerLink="/dashboard" routerLinkActive="bg-[var(--color-secondary-dark)] border-l-4 border-[var(--color-primary)]"
-         class="flex items-center gap-3 px-5 py-3 text-sm hover:bg-[var(--color-secondary-dark)] transition-colors">
-        Tableau de bord
-      </a>
-    </li>
-     <li>
-        <a routerLink="/magasin"
-        routerLinkActive="bg-[var(--color-secondary-dark)] border-l-4 border-[var(--color-primary)]"
-        class="flex items-center gap-3 px-5 py-3 text-sm hover:bg-[var(--color-secondary-dark)] transition-colors">
-        <span></span> Magasin
-      </a>
-    </li>
-    <li>
-      <a routerLink="/bon-commande" routerLinkActive="bg-[var(--color-secondary-dark)] border-l-4 border-[var(--color-primary)]"
-         class="flex items-center gap-3 px-5 py-3 text-sm hover:bg-[var(--color-secondary-dark)] transition-colors">
-        Faire un bon de commande
-      </a>
-    </li>
-    <li>
-      <a routerLink="/facturation" routerLinkActive="bg-[var(--color-secondary-dark)] border-l-4 border-[var(--color-primary)]"
-         class="flex items-center gap-3 px-5 py-3 text-sm hover:bg-[var(--color-secondary-dark)] transition-colors">
-        Facturation
-      </a>
-    </li>
-    <li>
-        <a routerLink="/comptes" routerLinkActive="bg-[var(--color-secondary-dark)] border-l-4 border-[var(--color-primary)]"
-           class="flex items-center gap-3 px-5 py-3 text-sm hover:bg-[var(--color-secondary-dark)] transition-colors">
-          Comptes
+  <p class="app-nav-section">Navigation</p>
+
+  <ul class="app-nav-list flex-1 flex flex-col gap-1 px-3">
+    
+    @if (isPro) {
+      <li>
+        <a routerLink="/dashboard" routerLinkActive="is-active" class="app-nav-link">
+          <span class="app-nav-icon"><app-icon name="dashboard" [size]="17" /></span>
+          <span class="app-nav-text">Tableau de bord</span>
         </a>
       </li>
-    <li>
-      <a routerLink="/contacts" routerLinkActive="bg-[var(--color-secondary-dark)] border-l-4 border-[var(--color-primary)]"
-         class="flex items-center gap-3 px-5 py-3 text-sm hover:bg-[var(--color-secondary-dark)] transition-colors">
-        Contacts
-      </a>
-    </li>
+      <li>
+        <a routerLink="/magasin" routerLinkActive="is-active" class="app-nav-link">
+          <span class="app-nav-icon"><app-icon name="store" [size]="17" /></span>
+          <span class="app-nav-text">Magasin & Stock</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/bon-commande" routerLinkActive="is-active" class="app-nav-link">
+          <span class="app-nav-icon"><app-icon name="bon-commande" [size]="17" /></span>
+          <span class="app-nav-text">Bon de commande</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/facturation" routerLinkActive="is-active" class="app-nav-link">
+          <span class="app-nav-icon"><app-icon name="receipt" [size]="17" /></span>
+          <span class="app-nav-text">Facturation</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/comptes" routerLinkActive="is-active" class="app-nav-link">
+          <span class="app-nav-icon"><app-icon name="wallet" [size]="17" /></span>
+          <span class="app-nav-text">Comptes & Trésorerie</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/contacts" routerLinkActive="is-active" class="app-nav-link">
+          <span class="app-nav-icon"><app-icon name="contacts" [size]="17" /></span>
+          <span class="app-nav-text">Répertoire contacts</span>
+        </a>
+      </li>
+    }
+
+    @if (isClient) {
+      <li>
+        <a routerLink="/catalogue" routerLinkActive="is-active" class="app-nav-link">
+          <span class="app-nav-icon"><app-icon name="store" [size]="17" /></span>
+          <span class="app-nav-text">Catalogue Produits</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/panier" routerLinkActive="is-active" class="app-nav-link">
+          <span class="app-nav-icon"><app-icon name="shopping-bag" [size]="17" /></span>
+          <span class="app-nav-text">Mon Panier</span>
+        </a>
+      </li>
+    }
+
   </ul>
 
-  <button (click)="logout()"
-          class="flex items-center gap-3 px-5 py-4 text-sm border-t border-white/10 hover:bg-[var(--color-secondary-dark)] transition-colors text-left">
-    Deconnexion
-  </button>
+  <div class="p-3 border-t border-white/10">
+    <button (click)="logout()" class="app-nav-link app-nav-logout w-full text-left">
+      <span class="app-nav-icon"><app-icon name="log-out" [size]="17" /></span>
+      <span class="app-nav-text">Déconnexion</span>
+    </button>
+  </div>
 </nav>

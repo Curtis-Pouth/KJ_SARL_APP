@@ -1,0 +1,15 @@
+.landing-hero-photo {
+  background-color: var(--color-secondary);
+  background-size: cover;
+  background-position: center;
+}
+
+.landing-collection-photo {
+  background-color: var(--color-secondary-light);
+  background-size: cover;
+  background-position: center;
+}
+
+.landing-collection-photo:hover {
+  transform: translateY(-4px);
+}

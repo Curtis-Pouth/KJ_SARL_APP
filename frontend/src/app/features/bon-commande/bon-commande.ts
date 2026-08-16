@@ -1,8 +1,10 @@
 import { Component, OnInit, computed, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Produit } from '../../core/models/produit';
 import { ProduitService } from '../../core/services/produit';
 import { BonCommandeService } from '../../core/services/bon-commande-service';
+import { AppIcon } from '../../shared/components/icon/icon.component';
 
 interface LigneAchat {
   produit: Produit;
@@ -11,7 +13,8 @@ interface LigneAchat {
 
 @Component({
   selector: 'app-bon-commande',
-  imports: [FormsModule],
+  standalone: true,
+  imports: [CommonModule, FormsModule, AppIcon],
   templateUrl: './bon-commande.html',
   styleUrl: './bon-commande.css',
 })
@@ -94,7 +97,7 @@ export class BonCommande implements OnInit {
     this.alertesStockFaible.set([]);
 
     if (this.lignes().length === 0) {
-      this.erreur.set('Merci de selectionner au moins un produit a commander.');
+      this.erreur.set('Merci de sélectionner au moins un produit à commander.');
       return;
     }
 
@@ -108,7 +111,7 @@ export class BonCommande implements OnInit {
       })
       .subscribe({
         next: (resultat) => {
-          this.message.set('Bon de commande enregistre avec succes. Le stock a ete mis a jour.');
+          this.message.set('Bon de commande enregistré avec succès. Le stock a été mis à jour.');
           this.alertesStockFaible.set(resultat.alertes_stock_faible ?? []);
           this.reinitialiser();
           this.chargement.set(false);

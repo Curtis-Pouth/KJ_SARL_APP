@@ -1,10 +1,13 @@
 import { Component, OnInit, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../core/services/auth';
+import { AppIcon } from '../../shared/components/icon/icon.component';
 
 @Component({
   selector: 'app-profile',
-  imports: [FormsModule],
+  standalone: true,
+  imports: [CommonModule, FormsModule, AppIcon],
   templateUrl: './profile.html',
   styleUrl: './profile.css',
 })
@@ -23,6 +26,13 @@ export class Profile implements OnInit {
     if (!this.authService.currentUser()) {
       this.authService.chargerUtilisateurCourant().subscribe();
     }
+  }
+
+  get initialesUtilisateur(): string {
+    const utilisateur = this.authService.currentUser();
+    const source = utilisateur?.nom?.trim() || utilisateur?.email?.split('@')[0] || 'KJ';
+    const morceaux = source.split(/\s+/).filter(Boolean);
+    return (morceaux.length > 1 ? morceaux[0][0] + morceaux[1][0] : source.slice(0, 2)).toUpperCase();
   }
 
   onSubmitChangePassword(): void {

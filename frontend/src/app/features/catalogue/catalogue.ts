@@ -1,20 +1,21 @@
 import { Component, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Produit, CategorieProduit } from '../../core/models/produit';
+import { ActivatedRoute } from '@angular/router';
+import { Produit } from '../../core/models/produit';
 import { ProduitService } from '../../core/services/produit';
+import { AppIcon } from '../../shared/components/icon/icon.component';
 
 @Component({
   selector: 'app-catalogue',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, AppIcon],
   templateUrl: './catalogue.html',
   styleUrl: './catalogue.css'
 })
 export class Catalogue implements OnInit {
   produits = signal<Produit[]>([]);
   chargement = signal<boolean>(true);
-  
   termeRecherche = signal<string>('');
   categorieActive = signal<string>('tous');
 
@@ -25,22 +26,25 @@ export class Catalogue implements OnInit {
 
     return this.produits().filter(p => {
       const correspondRecherche = p.libelle.toLowerCase().includes(recherche) || 
-                                   p.reference.toLowerCase().includes(recherche);
+                                   (p.reference ?? '').toLowerCase().includes(recherche);
       const correspondCategorie = cat === 'tous' || p.categorie === cat;
 
       return correspondRecherche && correspondCategorie;
     });
   });
 
-  constructor(private produitService: ProduitService) {}
+  constructor(private produitService: ProduitService, private route: ActivatedRoute) {}
 
   ngOnInit(): void {
+    this.route.queryParamMap.subscribe((params) => {
+      this.termeRecherche.set(params.get('recherche') ?? '');
+    });
     this.chargerProduits();
   }
 
   chargerProduits(): void {
-    this.produitService.getProduits().subscribe({
-      next: (data) => {
+    this.produitService.getAll().subscribe({
+      next: (data: Produit[]) => {
         this.produits.set(data);
         this.chargement.set(false);
       },
@@ -61,25 +65,14 @@ export class Catalogue implements OnInit {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files[0]) {
       const file = input.files[0];
-      
-      // Exemple de prévisualisation locale instantanée
       const reader = new FileReader();
       reader.onload = (e) => {
         const nouvelleUrl = e.target?.result as string;
-        
-        // Mise à jour de l'état local du produit
         this.produits.update(liste => 
-          liste.map(p => p.reference === produit.reference ? { ...p, image_url: nouvelleUrl } : p)
+          liste.map(p => p.id === produit.id ? { ...p, photo: nouvelleUrl } : p)
         );
       };
       reader.readAsDataURL(file);
-
-      // Si vous avez un service Backend pour uploader l'image :
-      /*
-      const formData = new FormData();
-      formData.append('image', file);
-      this.produitService.uploadImageProduit(produit.reference, formData).subscribe();
-      */
     }
   }
 }

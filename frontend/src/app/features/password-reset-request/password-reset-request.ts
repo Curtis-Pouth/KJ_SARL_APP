@@ -1,11 +1,14 @@
 import { Component, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../core/services/auth';
+import { AppIcon } from '../../shared/components/icon/icon.component';
 
 @Component({
   selector: 'app-password-reset-request',
-  imports: [FormsModule],
+  standalone: true,
+  imports: [CommonModule, FormsModule, RouterLink, AppIcon],
   templateUrl: './password-reset-request.html',
   styleUrl: './password-reset-request.css',
 })
@@ -23,7 +26,7 @@ export class PasswordResetRequest {
     this.chargement.set(true);
     this.authService.requestPasswordReset(this.email).subscribe({
       next: () => {
-        this.message.set('Code envoyé, vérifiez votre email.');
+        this.message.set('Code envoyé ! Redirection vers la page de confirmation...');
         setTimeout(
           () =>
             this.router.navigate(['/password-reset-confirm'], {
@@ -33,7 +36,7 @@ export class PasswordResetRequest {
         );
       },
       error: () => {
-        this.erreur.set('Aucun compte trouvé avec cet email.');
+        this.erreur.set('Aucun compte trouvé avec cette adresse email.');
         this.chargement.set(false);
       },
     });

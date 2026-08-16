@@ -1,0 +1,39 @@
+.contacts-page {
+  background:
+    radial-gradient(circle at 100% 0%, rgba(229, 138, 43, 0.12), transparent 28%),
+    var(--color-bg-alt);
+}
+
+.contacts-count {
+  min-width: 7rem;
+}
+
+.contact-card {
+  transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+}
+
+.contact-card:hover {
+  border-color: color-mix(in srgb, var(--color-primary) 50%, var(--color-border-soft));
+  box-shadow: 0 16px 32px rgba(16, 42, 67, 0.09);
+  transform: translateY(-2px);
+}
+
+.contact-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  color: var(--color-secondary);
+}
+
+.contact-line:hover {
+  color: var(--color-primary-dark);
+}
+
+.contact-label {
+  color: var(--color-text-muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}

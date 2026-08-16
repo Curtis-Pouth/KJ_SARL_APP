@@ -1,130 +1,134 @@
-<div class="p-6 space-y-6 bg-stone-100 min-h-screen text-stone-900">
-  <!-- En-tête -->
-  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-    <div>
-      <h1 class="text-3xl font-bold tracking-tight">Catalogue des Produits</h1>
-      <p class="text-stone-500 text-sm">Gestion des articles KJ SARL et de leurs visuels</p>
-    </div>
-    
-    <!-- Filtres rapides par catégorie -->
-    <div class="flex flex-wrap gap-2">
-      <button 
-        (click)="changerCategorie('tous')"
-        [class.bg-stone-900]="categorieActive() === 'tous'"
-        [class.text-white]="categorieActive() === 'tous'"
-        class="px-4 py-2 rounded-lg text-sm font-medium bg-white border border-stone-200 hover:bg-stone-50 transition">
-        Tous
-      </button>
-      <button 
-        (click)="changerCategorie('jus')"
-        [class.bg-amber-600]="categorieActive() === 'jus'"
-        [class.text-white]="categorieActive() === 'jus'"
-        class="px-4 py-2 rounded-lg text-sm font-medium bg-white border border-stone-200 hover:bg-stone-50 transition">
-        Jus & Softs
-      </button>
-      <button 
-        (click)="changerCategorie('biere')"
-        [class.bg-amber-800]="categorieActive() === 'biere'"
-        [class.text-white]="categorieActive() === 'biere'"
-        class="px-4 py-2 rounded-lg text-sm font-medium bg-white border border-stone-200 hover:bg-stone-50 transition">
-        Bières
-      </button>
-      <button 
-        (click)="changerCategorie('eau')"
-        [class.bg-blue-600]="categorieActive() === 'eau'"
-        [class.text-white]="categorieActive() === 'eau'"
-        class="px-4 py-2 rounded-lg text-sm font-medium bg-white border border-stone-200 hover:bg-stone-50 transition">
-        Eaux
-      </button>
-      <button 
-        (click)="changerCategorie('emballage')"
-        [class.bg-stone-600]="categorieActive() === 'emballage'"
-        [class.text-white]="categorieActive() === 'emballage'"
-        class="px-4 py-2 rounded-lg text-sm font-medium bg-white border border-stone-200 hover:bg-stone-50 transition">
-        Emballages
-      </button>
-    </div>
-  </div>
-
-  <!-- Barre de recherche -->
-  <div class="bg-white p-4 rounded-xl shadow-sm border border-stone-200">
-    <input 
-      type="text" 
-      [value]="termeRecherche()"
-      (input)="surRecherche($event)"
-      placeholder="Rechercher par référence ou désignation (ex: Coca, 65cl, TPA30C)..." 
-      class="w-full px-4 py-2 rounded-lg border border-stone-300 focus:outline-none focus:ring-2 focus:ring-stone-400"
-    />
-  </div>
-
-  <!-- Grille des produits -->
-  @if (chargement()) {
-    <div class="p-12 text-center text-stone-500">Chargement des produits...</div>
-  } @else if (produitsFiltres().length === 0) {
-    <div class="p-12 text-center text-stone-500 bg-white rounded-xl border border-stone-200">
-      Aucun produit trouvé.
-    </div>
-  } @else {
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-      @for (produit of produitsFiltres(); track produit.reference) {
-        <div class="bg-white rounded-xl border border-stone-200 shadow-sm overflow-hidden flex flex-col justify-between hover:shadow-md transition">
-          
-          <!-- Zone d'image avec fallback -->
-          <div class="relative h-48 bg-stone-100 flex items-center justify-center border-b border-stone-100 group">
-            @if (produit.image_url) {
-              <img 
-                [src]="produit.image_url" 
-                [alt]="produit.libelle" 
-                class="h-full w-full object-contain p-4"
-              />
-            } @else {
-              <div class="flex flex-col items-center justify-center text-stone-400">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-                <span class="text-xs">Sans image</span>
-              </div>
-            }
-
-            <!-- Badge de catégorie -->
-            <span [ngClass]="{
-              'bg-amber-100 text-amber-800': produit.categorie === 'jus',
-              'bg-amber-900/10 text-amber-950': produit.categorie === 'biere',
-              'bg-blue-100 text-blue-800': produit.categorie === 'eau',
-              'bg-stone-200 text-stone-700': produit.categorie === 'emballage'
-            }" class="absolute top-2 right-2 text-xs font-bold px-2 py-1 rounded-md uppercase">
-              {{ produit.categorie }}
-            </span>
-
-            <!-- Input invisible pour téléverser une image -->
-            <label class="absolute inset-0 bg-black/40 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition cursor-pointer text-xs font-semibold">
-              <span>Changer l'image</span>
-              <input 
-                type="file" 
-                accept="image/*" 
-                class="hidden" 
-                (change)="uploaderImage($event, produit)"
-              />
-            </label>
-          </div>
-
-          <!-- Contenu descriptif -->
-          <div class="p-4 flex-1 flex flex-col justify-between">
-            <div>
-              <span class="text-xs font-mono font-bold text-stone-400 uppercase tracking-wider">{{ produit.reference }}</span>
-              <h3 class="text-sm font-semibold text-stone-800 mt-1 line-clamp-2" [title]="produit.libelle">
-                {{ produit.libelle }}
-              </h3>
-            </div>
-
-            <div class="mt-4 pt-3 border-t border-stone-100 flex items-center justify-between">
-              <span class="text-xs text-stone-500">Prix unitaire</span>
-              <span class="text-base font-bold text-stone-900">{{ produit.prix_unitaire | currency:'XAF':'symbol':'1.0-0' }}</span>
-            </div>
-          </div>
-
+<section class="catalogue-page min-h-full">
+  <div class="catalogue-shell max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+    <header class="catalogue-header flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-6 border-b border-[var(--color-border-soft)]">
+      <div>
+        <p class="text-xs font-bold uppercase tracking-[0.18em] text-[var(--color-primary-dark)]">Référentiel produits</p>
+        <h1 class="text-3xl sm:text-4xl font-extrabold text-[var(--color-secondary)] mt-1">Catalogue officiel</h1>
+        <p class="text-sm text-[var(--color-text-muted)] mt-1">Consultez les références en stock et les tarifs unitaires applicables.</p>
+      </div>
+      <div class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-[var(--color-border-soft)] shadow-xs">
+        <app-icon name="package" [size]="18" class="text-[var(--color-primary)]" />
+        <div>
+          <span class="text-base font-extrabold text-[var(--color-secondary)]">{{ produitsFiltres().length }}</span>
+          <span class="text-[11px] text-[var(--color-text-muted)] font-semibold ml-1.5 uppercase tracking-wider">références</span>
         </div>
-      }
+      </div>
+    </header>
+
+    <div class="catalogue-toolbar flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
+      <div class="relative flex-1 max-w-md">
+        <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] flex items-center">
+          <app-icon name="search" [size]="16" />
+        </span>
+        <input
+          [value]="termeRecherche()"
+          (input)="surRecherche($event)"
+          type="search"
+          placeholder="Rechercher par libellé ou référence..."
+          class="w-full pl-10 pr-4 py-2.5 bg-white border border-[var(--color-border-soft)] rounded-xl text-sm focus:outline-none focus:border-[var(--color-primary)] shadow-xs"
+        />
+      </div>
+
+      <div class="flex flex-wrap items-center gap-2">
+        <button
+          type="button"
+          (click)="changerCategorie('tous')"
+          [class.active]="categorieActive() === 'tous'"
+          class="cat-filter-btn"
+        >
+          <app-icon name="layers" [size]="14" />
+          <span>Tous</span>
+        </button>
+        <button
+          type="button"
+          (click)="changerCategorie('biere')"
+          [class.active]="categorieActive() === 'biere'"
+          class="cat-filter-btn"
+        >
+          <app-icon name="beer" [size]="14" />
+          <span>Bières</span>
+        </button>
+        <button
+          type="button"
+          (click)="changerCategorie('jus')"
+          [class.active]="categorieActive() === 'jus'"
+          class="cat-filter-btn"
+        >
+          <app-icon name="cup-soda" [size]="14" />
+          <span>Jus & Softs</span>
+        </button>
+        <button
+          type="button"
+          (click)="changerCategorie('eau')"
+          [class.active]="categorieActive() === 'eau'"
+          class="cat-filter-btn"
+        >
+          <app-icon name="droplet" [size]="14" />
+          <span>Eaux</span>
+        </button>
+        <button
+          type="button"
+          (click)="changerCategorie('emballage')"
+          [class.active]="categorieActive() === 'emballage'"
+          class="cat-filter-btn"
+        >
+          <app-icon name="package" [size]="14" />
+          <span>Emballages</span>
+        </button>
+      </div>
     </div>
-  }
-</div>
+
+    @if (chargement()) {
+      <div class="p-12 text-center text-sm text-[var(--color-text-muted)] bg-white rounded-2xl border border-[var(--color-border-soft)]">
+        Chargement des produits du catalogue...
+      </div>
+    } @else if (produitsFiltres().length === 0) {
+      <div class="p-12 text-center bg-white rounded-2xl border border-dashed border-[var(--color-border-soft)] space-y-2">
+        <div class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 mx-auto mb-3">
+          <app-icon name="search" [size]="20" />
+        </div>
+        <p class="font-bold text-[var(--color-secondary)]">Aucun produit trouvé</p>
+        <p class="text-xs text-[var(--color-text-muted)]">Modifiez votre recherche ou sélectionnez une autre catégorie de produits.</p>
+      </div>
+    } @else {
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+        @for (produit of produitsFiltres(); track produit.id) {
+          <article class="product-card group bg-white rounded-2xl border border-[var(--color-border-soft)] shadow-xs hover:shadow-lg transition-all duration-200 overflow-hidden flex flex-col justify-between">
+            <div class="product-media relative h-48 bg-slate-50 flex items-center justify-center overflow-hidden p-4 border-b border-slate-100">
+              @if (produit.photo) {
+                <img [src]="produit.photo" [alt]="produit.libelle" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300" />
+              } @else {
+                <div class="w-14 h-14 rounded-2xl bg-[var(--color-primary)] text-white font-extrabold flex items-center justify-center text-base shadow-sm">
+                  KJ
+                </div>
+              }
+              <span class="absolute top-3 right-3 px-2.5 py-1 rounded-md bg-white/95 backdrop-blur-xs text-[10px] font-extrabold text-[var(--color-secondary)] uppercase tracking-wider shadow-xs border border-slate-200/60">
+                {{ produit.categorie }}
+              </span>
+
+              <label class="product-upload absolute inset-x-0 bottom-0 py-2 bg-[var(--color-secondary)]/90 backdrop-blur-xs text-white text-xs font-semibold flex items-center justify-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+                <app-icon name="camera" [size]="14" />
+                <span>Changer la photo</span>
+                <input type="file" accept="image/*" class="hidden" (change)="uploaderImage($event, produit)" />
+              </label>
+            </div>
+
+            <div class="p-4 space-y-2 flex-1 flex flex-col justify-between">
+              <div>
+                <span class="text-[11px] font-mono text-[var(--color-text-muted)] uppercase tracking-wider block font-semibold">{{ produit.reference }}</span>
+                <h2 class="text-sm font-bold text-[var(--color-secondary)] line-clamp-2 mt-0.5 leading-snug">{{ produit.libelle }}</h2>
+              </div>
+
+              <div class="pt-3 mt-2 border-t border-[var(--color-border-soft)] flex items-center justify-between">
+                <span class="text-[11px] text-[var(--color-text-muted)] font-medium">Prix unitaire</span>
+                <span class="text-sm font-extrabold text-[var(--color-primary-dark)]">
+                  {{ produit.prix_unitaire | currency:'XAF':'symbol':'1.0-0' }}
+                </span>
+              </div>
+            </div>
+          </article>
+        }
+      </div>
+    }
+  </div>
+</section>

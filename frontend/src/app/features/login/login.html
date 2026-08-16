@@ -1,74 +1,95 @@
-<div class="min-h-screen flex flex-col items-center bg-[#2B0D0D] px-4 py-10">
-  <div class="relative w-24 h-24 mb-4 rounded-full bg-[var(--color-primary)] flex items-center justify-center overflow-hidden shadow-lg">
-    <span class="text-[#2B0D0D] font-bold text-2xl">KJ</span>
-    <img src="logo-kj-sarl.png" alt="KJ SARL" class="absolute inset-0 w-full h-full object-contain bg-white" onerror="this.style.display='none'" />
-  </div>
-
-  <h1 class="text-2xl font-bold text-white tracking-wide">K.J SARL</h1>
-  <p class="text-sm text-[var(--color-primary-light)] italic mb-8">Votre satisfaction, notre plaisir</p>
-
-  <div class="w-full max-w-sm">
-    <div class="flex bg-white/10 rounded-full p-1 mb-6">
-      <span class="flex-1 text-center py-2.5 rounded-full text-sm font-semibold bg-[var(--color-primary)] text-[#2B0D0D]">
-        Connexion
-      </span>
-      <a routerLink="/register" class="flex-1 text-center py-2.5 rounded-full text-sm font-semibold text-white/70 hover:text-white transition-colors">
-        Inscription
-      </a>
+<div class="auth-page min-h-screen flex flex-col items-center justify-center bg-[var(--color-secondary)] px-4 py-12">
+  <div class="w-full max-w-md space-y-6">
+    <div class="text-center space-y-2">
+      <div class="relative w-16 h-16 mx-auto rounded-2xl bg-[var(--color-primary)] flex items-center justify-center overflow-hidden shadow-lg border-2 border-white/20">
+        <span class="text-[var(--color-secondary)] font-extrabold text-2xl tracking-wider">KJ</span>
+      </div>
+      <h1 class="text-2xl font-extrabold text-white tracking-wide">K.J SARL</h1>
+      <p class="text-xs text-[var(--color-primary-light)] font-medium">Votre satisfaction, notre plaisir · Distribution Professionnelle</p>
     </div>
 
-    <form (ngSubmit)="onSubmit()" class="space-y-4">
-      <div class="relative">
-        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-[#2B0D0D]/50">@</span>
-        <input
-          type="email" name="email" [(ngModel)]="email" required
-          placeholder="Adresse email" autocomplete="email"
-          class="w-full pl-10 pr-4 py-3.5 rounded-full bg-[var(--color-primary-light)] text-[#2B0D0D] placeholder-[#2B0D0D]/50 focus:outline-none focus:ring-2 focus:ring-white/50"
-        />
+    <div class="bg-white/10 backdrop-blur-md rounded-2xl p-6 sm:p-8 border border-white/15 shadow-2xl space-y-6">
+      <div class="flex bg-black/20 rounded-xl p-1">
+        <span class="flex-1 text-center py-2 rounded-lg text-xs font-bold bg-[var(--color-primary)] text-[var(--color-secondary)] shadow-xs">
+          Connexion
+        </span>
+        <a routerLink="/register" class="flex-1 text-center py-2 rounded-lg text-xs font-bold text-white/70 hover:text-white transition-colors">
+          Inscription Client
+        </a>
       </div>
 
-      <div class="relative">
-        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-[#2B0D0D]/50">&#128274;</span>
-        <input
-          [type]="motDePasseVisible() ? 'text' : 'password'"
-          name="motDePasse" [(ngModel)]="motDePasse" required
-          placeholder="Mot de passe" autocomplete="current-password"
-          class="w-full pl-10 pr-12 py-3.5 rounded-full bg-[var(--color-primary-light)] text-[#2B0D0D] placeholder-[#2B0D0D]/50 focus:outline-none focus:ring-2 focus:ring-white/50"
-        />
+      <div class="space-y-1">
+        <h2 class="text-lg font-bold text-white">Espace de connexion</h2>
+        <p class="text-xs text-white/70">Connectez-vous pour accéder à vos opérations et stocks.</p>
+      </div>
+
+      <form (ngSubmit)="onSubmit()" class="space-y-4">
+        <div class="space-y-1">
+          <label class="text-[11px] font-bold text-white/80 uppercase tracking-wider">Adresse email</label>
+          <div class="relative">
+            <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/50 flex items-center">
+              <app-icon name="mail" [size]="16" />
+            </span>
+            <input
+              type="email"
+              name="email"
+              [(ngModel)]="email"
+              required
+              placeholder="votre.email@exemple.com"
+              autocomplete="email"
+              class="w-full pl-10 pr-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/40 text-xs sm:text-sm focus:outline-none focus:border-[var(--color-primary)] focus:bg-white/15"
+            />
+          </div>
+        </div>
+
+        <div class="space-y-1">
+          <label class="text-[11px] font-bold text-white/80 uppercase tracking-wider">Mot de passe</label>
+          <div class="relative">
+            <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/50 flex items-center">
+              <app-icon name="lock" [size]="16" />
+            </span>
+            <input
+              [type]="motDePasseVisible() ? 'text' : 'password'"
+              name="motDePasse"
+              [(ngModel)]="motDePasse"
+              required
+              placeholder="Votre mot de passe"
+              autocomplete="current-password"
+              class="w-full pl-10 pr-11 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/40 text-xs sm:text-sm focus:outline-none focus:border-[var(--color-primary)] focus:bg-white/15"
+            />
+            <button
+              type="button"
+              (click)="basculerVisibiliteMotDePasse()"
+              class="absolute right-3.5 top-1/2 -translate-y-1/2 text-white/60 hover:text-white transition-colors cursor-pointer"
+              [attr.aria-label]="motDePasseVisible() ? 'Masquer le mot de passe' : 'Afficher le mot de passe'"
+            >
+              <app-icon [name]="motDePasseVisible() ? 'eye-off' : 'eye'" [size]="16" />
+            </button>
+          </div>
+        </div>
+
+        @if (erreur()) {
+          <div class="rounded-xl border border-red-400/30 bg-red-500/20 p-3 text-xs text-red-100 flex items-center gap-2">
+            <app-icon name="alert-circle" [size]="16" class="text-red-300 shrink-0" />
+            <span>{{ erreur() }}</span>
+          </div>
+        }
+
         <button
-          type="button" (click)="basculerVisibiliteMotDePasse()"
-          class="absolute right-4 top-1/2 -translate-y-1/2 text-[#2B0D0D]/60 hover:text-[#2B0D0D] transition-colors"
-          [attr.aria-label]="motDePasseVisible() ? 'Masquer le mot de passe' : 'Afficher le mot de passe'"
+          type="submit"
+          [disabled]="chargement()"
+          class="btn-primary w-full py-3 rounded-xl text-xs sm:text-sm font-bold shadow-lg disabled:opacity-60 cursor-pointer"
         >
-          @if (motDePasseVisible()) {
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M3 3l18 18M10.58 10.58a2 2 0 0 0 2.83 2.83M9.88 4.24A9.77 9.77 0 0 1 12 4c5 0 9 4.5 10 8-.36 1.12-1 2.24-1.83 3.24M6.1 6.1C3.9 7.5 2.36 9.5 2 12c1 3.5 5 8 10 8 1.5 0 2.9-.36 4.14-1" />
-            </svg>
-          } @else {
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M2 12s4-8 10-8 10 8 10 8-4 8-10 8-10-8-10-8Z" />
-              <circle cx="12" cy="12" r="3" />
-            </svg>
-          }
+          <app-icon name="check" [size]="16" />
+          <span>{{ chargement() ? 'Connexion en cours...' : 'Se connecter' }}</span>
         </button>
+      </form>
+
+      <div class="pt-2 text-center">
+        <a routerLink="/password-reset-request" class="text-xs text-[var(--color-primary-light)] hover:text-white hover:underline transition-colors">
+          Mot de passe oublié ?
+        </a>
       </div>
-
-      @if (erreur()) {
-        <p class="text-red-300 text-sm text-center">{{ erreur() }}</p>
-      }
-
-      <button
-        type="submit" [disabled]="chargement()"
-        class="w-full py-3.5 rounded-full font-semibold text-white bg-[var(--color-secondary)] hover:bg-[var(--color-secondary-dark)] disabled:opacity-60 transition-colors shadow-md"
-      >
-        {{ chargement() ? 'Connexion...' : 'Se connecter' }}
-      </button>
-    </form>
-
-    <p class="text-center text-sm mt-6">
-      <a routerLink="/password-reset-request" class="text-[var(--color-primary-light)] hover:underline">
-        Mot de passe oublie ?
-      </a>
-    </p>
+    </div>
   </div>
 </div>

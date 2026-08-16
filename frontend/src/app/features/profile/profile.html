@@ -1,67 +1,140 @@
-<div class="max-w-2xl mx-auto mt-10 p-6 space-y-6">
-  <h2 class="text-2xl font-semibold text-[var(--color-secondary)]">Mon profil</h2>
+<div class="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+  <header class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[var(--color-border-soft)]">
+    <div>
+      <p class="text-xs font-bold uppercase tracking-[0.18em] text-[var(--color-primary-dark)]">Paramètres & Compte</p>
+      <h1 class="text-2xl sm:text-3xl font-extrabold text-[var(--color-secondary)] mt-1">Mon profil utilisateur</h1>
+      <p class="text-xs sm:text-sm text-[var(--color-text-muted)] mt-1">Consultez vos informations de compte et sécurisez votre accès.</p>
+    </div>
+  </header>
 
-  <div class="bg-white rounded-xl shadow-md border-t-4 border-[var(--color-primary)] p-8">
-    <h3 class="text-lg font-medium text-[var(--color-text)] mb-4">Informations</h3>
+  <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
+    <!-- USER CARD (COL-5) -->
+    <div class="md:col-span-5 bg-white rounded-2xl border border-[var(--color-border-soft)] shadow-xs p-6 space-y-6">
+      <div class="text-center space-y-3 pb-6 border-b border-[var(--color-border-soft)]">
+        <div class="w-20 h-20 rounded-2xl bg-[var(--color-secondary)] text-[var(--color-primary-light)] text-2xl font-extrabold flex items-center justify-center mx-auto shadow-md border-2 border-orange-100">
+          {{ initialesUtilisateur }}
+        </div>
+        <div>
+          <h2 class="text-lg font-bold text-[var(--color-secondary)]">
+            {{ authService.currentUser()?.nom || 'Utilisateur KJ SARL' }}
+          </h2>
+          <span class="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-slate-100 text-xs font-bold text-slate-700 capitalize mt-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+            Rôle : {{ authService.currentUser()?.role || 'collaborateur' }}
+          </span>
+        </div>
+      </div>
 
-    @if (authService.currentUser(); as utilisateur) {
-      <dl class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-        <div>
-          <dt class="text-[var(--color-text-muted)]">Nom</dt>
-          <dd class="font-medium">{{ utilisateur.nom || '—' }}</dd>
+      <div class="space-y-3 text-xs">
+        <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-50">
+          <span class="flex items-center gap-2 text-[var(--color-text-muted)]">
+            <app-icon name="mail" [size]="14" />
+            <span>Adresse email</span>
+          </span>
+          <span class="font-bold text-[var(--color-secondary)] truncate max-w-[170px]">
+            {{ authService.currentUser()?.email }}
+          </span>
         </div>
-        <div>
-          <dt class="text-[var(--color-text-muted)]">Email</dt>
-          <dd class="font-medium">{{ utilisateur.email }}</dd>
-        </div>
-        <div>
-          <dt class="text-[var(--color-text-muted)]">Rôle</dt>
-          <dd class="font-medium capitalize">{{ utilisateur.role }}</dd>
-        </div>
-        @if (utilisateur.matricule) {
-          <div>
-            <dt class="text-[var(--color-text-muted)]">Matricule</dt>
-            <dd class="font-medium">{{ utilisateur.matricule }}</dd>
+
+        @if (authService.currentUser()?.matricule) {
+          <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-50">
+            <span class="flex items-center gap-2 text-[var(--color-text-muted)]">
+              <app-icon name="key" [size]="14" />
+              <span>Matricule</span>
+            </span>
+            <span class="font-bold font-mono text-[var(--color-secondary)]">
+              {{ authService.currentUser()?.matricule }}
+            </span>
           </div>
         }
-      </dl>
-    } @else {
-      <p class="text-[var(--color-text-muted)]">Chargement...</p>
-    }
-  </div>
 
-  <div class="bg-white rounded-xl shadow-md border-t-4 border-[var(--color-primary)] p-8">
-    <h3 class="text-lg font-medium text-[var(--color-text)] mb-4">Changer le mot de passe</h3>
+        @if (authService.currentUser()?.adresse_livraison) {
+          <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-50">
+            <span class="flex items-center gap-2 text-[var(--color-text-muted)]">
+              <app-icon name="map-pin" [size]="14" />
+              <span>Livraison</span>
+            </span>
+            <span class="font-bold text-[var(--color-secondary)]">
+              {{ authService.currentUser()?.adresse_livraison }}
+            </span>
+          </div>
+        }
+      </div>
+    </div>
 
-    <form (ngSubmit)="onSubmitChangePassword()" class="flex flex-col gap-1">
-      <label class="text-sm font-semibold text-[var(--color-text-muted)]">Mot de passe actuel</label>
-      <input type="password" name="ancienMotDePasse" [(ngModel)]="ancienMotDePasse" required
-        class="w-full px-3 py-2 mb-4 border border-[var(--color-border-soft)] rounded-md
-               focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30 focus:border-[var(--color-primary)]" />
-
-      <label class="text-sm font-semibold text-[var(--color-text-muted)]">Nouveau mot de passe</label>
-      <input type="password" name="nouveauMotDePasse" [(ngModel)]="nouveauMotDePasse" required minlength="8"
-        class="w-full px-3 py-2 mb-4 border border-[var(--color-border-soft)] rounded-md
-               focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30 focus:border-[var(--color-primary)]" />
-
-      <label class="text-sm font-semibold text-[var(--color-text-muted)]">Confirmer le nouveau mot de passe</label>
-      <input type="password" name="confirmationMotDePasse" [(ngModel)]="confirmationMotDePasse" required minlength="8"
-        class="w-full px-3 py-2 mb-4 border border-[var(--color-border-soft)] rounded-md
-               focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30 focus:border-[var(--color-primary)]" />
+    <!-- CHANGE PASSWORD (COL-7) -->
+    <div class="md:col-span-7 bg-white rounded-2xl border border-[var(--color-border-soft)] shadow-xs p-6 space-y-6">
+      <div class="flex items-center gap-2.5 pb-4 border-b border-[var(--color-border-soft)]">
+        <div class="w-8 h-8 rounded-lg bg-orange-100/80 text-[var(--color-primary-dark)] flex items-center justify-center">
+          <app-icon name="lock" [size]="16" />
+        </div>
+        <div>
+          <h2 class="text-base font-bold text-[var(--color-secondary)]">Sécurité & Mot de passe</h2>
+          <p class="text-[11px] text-[var(--color-text-muted)]">Mettez à jour votre clé d'accès régulière</p>
+        </div>
+      </div>
 
       @if (message()) {
-        <p class="text-green-600 text-sm mb-2">{{ message() }}</p>
+        <div class="bg-emerald-50 border border-emerald-300 text-emerald-800 rounded-xl p-3.5 text-xs font-bold flex items-center gap-2">
+          <app-icon name="check-circle" [size]="16" class="text-emerald-600 shrink-0" />
+          <span>{{ message() }}</span>
+        </div>
       }
       @if (erreur()) {
-        <p class="text-red-600 text-sm mb-2">{{ erreur() }}</p>
+        <div class="bg-red-50 border border-red-200 text-red-700 rounded-xl p-3.5 text-xs flex items-center gap-2">
+          <app-icon name="alert-circle" [size]="16" class="text-red-600 shrink-0" />
+          <span>{{ erreur() }}</span>
+        </div>
       }
 
-      <button type="submit" [disabled]="chargement()"
-        class="self-start mt-2 px-6 py-2.5 rounded-md font-semibold text-white
-               bg-[var(--color-secondary)] hover:bg-[var(--color-secondary-dark)]
-               disabled:opacity-60 transition-colors">
-        {{ chargement() ? 'Enregistrement...' : 'Changer le mot de passe' }}
-      </button>
-    </form>
+      <form (ngSubmit)="onSubmitChangePassword()" class="space-y-4">
+        <div class="space-y-1">
+          <label class="text-xs font-bold text-slate-700">Mot de passe actuel</label>
+          <input
+            type="password"
+            name="ancienMotDePasse"
+            [(ngModel)]="ancienMotDePasse"
+            required
+            placeholder="••••••••"
+            class="w-full px-3.5 py-2.5 bg-slate-50 border border-[var(--color-border-soft)] rounded-xl text-xs sm:text-sm font-semibold focus:outline-none focus:border-[var(--color-primary)] focus:bg-white"
+          />
+        </div>
+
+        <div class="space-y-1">
+          <label class="text-xs font-bold text-slate-700">Nouveau mot de passe (8 caractères min.)</label>
+          <input
+            type="password"
+            name="nouveauMotDePasse"
+            [(ngModel)]="nouveauMotDePasse"
+            required
+            minlength="8"
+            placeholder="••••••••"
+            class="w-full px-3.5 py-2.5 bg-slate-50 border border-[var(--color-border-soft)] rounded-xl text-xs sm:text-sm font-semibold focus:outline-none focus:border-[var(--color-primary)] focus:bg-white"
+          />
+        </div>
+
+        <div class="space-y-1">
+          <label class="text-xs font-bold text-slate-700">Confirmer le nouveau mot de passe</label>
+          <input
+            type="password"
+            name="confirmationMotDePasse"
+            [(ngModel)]="confirmationMotDePasse"
+            required
+            minlength="8"
+            placeholder="••••••••"
+            class="w-full px-3.5 py-2.5 bg-slate-50 border border-[var(--color-border-soft)] rounded-xl text-xs sm:text-sm font-semibold focus:outline-none focus:border-[var(--color-primary)] focus:bg-white"
+          />
+        </div>
+
+        <button
+          type="submit"
+          [disabled]="chargement()"
+          class="btn-primary px-6 py-2.5 rounded-xl text-xs font-bold shadow-md disabled:opacity-60 cursor-pointer mt-2"
+        >
+          <app-icon name="check" [size]="15" />
+          <span>{{ chargement() ? 'Mise à jour...' : 'Enregistrer le nouveau mot de passe' }}</span>
+        </button>
+      </form>
+    </div>
   </div>
 </div>

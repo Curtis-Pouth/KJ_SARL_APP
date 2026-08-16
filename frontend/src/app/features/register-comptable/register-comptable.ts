@@ -1,11 +1,14 @@
 import { Component, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth';
+import { AppIcon } from '../../shared/components/icon/icon.component';
 
 @Component({
   selector: 'app-register-comptable',
-  imports: [FormsModule],
+  standalone: true,
+  imports: [CommonModule, FormsModule, AppIcon],
   templateUrl: './register-comptable.html',
   styleUrl: './register-comptable.css',
 })

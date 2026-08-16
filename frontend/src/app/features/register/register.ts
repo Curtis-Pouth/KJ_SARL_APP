@@ -1,11 +1,14 @@
 import { Component, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../core/services/auth';
+import { AppIcon } from '../../shared/components/icon/icon.component';
 
 @Component({
   selector: 'app-register',
-  imports: [FormsModule],
+  standalone: true,
+  imports: [CommonModule, FormsModule, RouterLink, AppIcon],
   templateUrl: './register.html',
   styleUrl: './register.css',
 })
@@ -16,10 +19,9 @@ export class Register {
   adresseLivraison = '';
   erreur = signal('');
   chargement = signal(false);
+  motDePasseVisible = signal(false);
 
   constructor(private authService: AuthService, private router: Router) {}
-
-  motDePasseVisible = signal(false);
 
   basculerVisibiliteMotDePasse(): void {
     this.motDePasseVisible.update((v) => !v);

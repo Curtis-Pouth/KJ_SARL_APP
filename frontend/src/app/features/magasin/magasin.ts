@@ -1,12 +1,15 @@
 import { Component, OnInit, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { CategorieProduit, Produit } from '../../core/models/produit';
 import { ProduitService } from '../../core/services/produit';
+import { AppIcon } from '../../shared/components/icon/icon.component';
 
 @Component({
   selector: 'app-magasin',
-  imports: [FormsModule, RouterLink],
+  standalone: true,
+  imports: [CommonModule, FormsModule, RouterLink, AppIcon],
   templateUrl: './magasin.html',
   styleUrl: './magasin.css',
 })
@@ -20,40 +23,40 @@ export class Magasin implements OnInit {
   rechargeEnCours = signal<number | null>(null);
   alerteStockFaible = signal('');
 
+  photoEnCours = signal<number | null>(null);
+  erreurPhoto = signal('');
+
   constructor(private produitService: ProduitService) {}
 
   ngOnInit(): void {
     this.chargerProduits();
   }
 
-  photoEnCours = signal<number | null>(null);
-erreurPhoto = signal('');
+  onFichierPhotoSelectionne(produit: Produit, event: Event): void {
+    this.erreurPhoto.set('');
+    const input = event.target as HTMLInputElement;
+    const fichier = input.files?.[0];
 
-onFichierPhotoSelectionne(produit: Produit, event: Event): void {
-  this.erreurPhoto.set('');
-  const input = event.target as HTMLInputElement;
-  const fichier = input.files?.[0];
+    if (!fichier) {
+      return;
+    }
 
-  if (!fichier) {
-    return;
+    this.photoEnCours.set(produit.id);
+    this.produitService.uploaderPhoto(produit.id, fichier).subscribe({
+      next: (produitMisAJour) => {
+        this.produits.update((liste) =>
+          liste.map((p) => (p.id === produit.id ? produitMisAJour : p))
+        );
+        this.photoEnCours.set(null);
+        input.value = '';
+      },
+      error: () => {
+        this.erreurPhoto.set(`Erreur lors de l'envoi de la photo pour "${produit.libelle}".`);
+        this.photoEnCours.set(null);
+        input.value = '';
+      },
+    });
   }
-
-  this.photoEnCours.set(produit.id);
-  this.produitService.uploaderPhoto(produit.id, fichier).subscribe({
-    next: (produitMisAJour) => {
-      this.produits.update((liste) =>
-        liste.map((p) => (p.id === produit.id ? produitMisAJour : p))
-      );
-      this.photoEnCours.set(null);
-      input.value = '';
-    },
-    error: () => {
-      this.erreurPhoto.set(`Erreur lors de l'envoi de la photo pour "${produit.libelle}".`);
-      this.photoEnCours.set(null);
-      input.value = '';
-    },
-  });
-}
 
   chargerProduits(): void {
     this.chargement.set(true);
@@ -102,12 +105,12 @@ onFichierPhotoSelectionne(produit: Produit, event: Event): void {
 
         if (produitMisAJour.stock_faible) {
           this.alerteStockFaible.set(
-            `Attention : le stock de "${produitMisAJour.libelle}" est encore faible (${produitMisAJour.quantite_en_stock} unites, seuil : 50).`
+            `Attention : le stock de "${produitMisAJour.libelle}" est encore faible (${produitMisAJour.quantite_en_stock} unités, seuil : 50).`
           );
         }
       },
       error: () => {
-        this.erreur.set('Erreur lors de la mise a jour du stock.');
+        this.erreur.set('Erreur lors de la mise à jour du stock.');
         this.rechargeEnCours.set(null);
       },
     });
@@ -115,11 +118,21 @@ onFichierPhotoSelectionne(produit: Produit, event: Event): void {
 
   libelleCategorie(categorie: CategorieProduit): string {
     const libelles: Record<CategorieProduit, string> = {
-      eau: 'Eau',
-      biere: 'Biere',
-      emballage: 'Emballage',
-      jus: 'Jus',
+      eau: 'Eaux',
+      biere: 'Bières',
+      emballage: 'Emballages',
+      jus: 'Jus & Softs',
     };
     return libelles[categorie] ?? categorie;
+  }
+
+  iconeCategorie(categorie: CategorieProduit): string {
+    switch (categorie) {
+      case 'biere': return 'beer';
+      case 'jus': return 'cup-soda';
+      case 'eau': return 'droplet';
+      case 'emballage': return 'package';
+      default: return 'tag';
+    }
   }
 }

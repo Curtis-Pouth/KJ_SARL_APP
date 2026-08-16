@@ -1,8 +1,97 @@
-<div class="max-w-4xl mx-auto mt-10 p-6">
-  <h2 class="text-2xl font-semibold text-[var(--color-secondary)] mb-6">Contacts</h2>
-  <div class="bg-white rounded-xl shadow-md border-t-4 border-[var(--color-primary)] p-8">
-    <p class="text-[var(--color-text-muted)]">
-      La liste des contacts sera affichée ici (connectée à l'endpoint <code class="text-[var(--color-secondary)]">/api/contacts/</code>).
-    </p>
+<section class="contacts-page min-h-full p-4 sm:p-6 lg:p-8">
+  <div class="mx-auto max-w-7xl space-y-6">
+    <header class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[var(--color-border-soft)]">
+      <div>
+        <p class="text-xs font-bold uppercase tracking-[0.18em] text-[var(--color-primary-dark)]">Carnet d'adresses & Répertoire</p>
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-[var(--color-secondary)] mt-1">Contacts & Partenaires</h1>
+        <p class="text-xs sm:text-sm text-[var(--color-text-muted)] mt-1">
+          Retrouvez rapidement les fournisseurs, distributeurs et interlocuteurs réguliers de KJ SARL.
+        </p>
+      </div>
+      <div class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-[var(--color-border-soft)] shadow-xs self-start sm:self-auto">
+        <app-icon name="users" [size]="18" class="text-[var(--color-primary)]" />
+        <div>
+          <span class="text-base font-extrabold text-[var(--color-secondary)]">{{ contacts().length }}</span>
+          <span class="text-[11px] text-[var(--color-text-muted)] font-semibold ml-1.5 uppercase tracking-wider">contacts</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="relative max-w-md">
+      <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] flex items-center">
+        <app-icon name="search" [size]="16" />
+      </span>
+      <input
+        type="search"
+        [ngModel]="recherche()"
+        (ngModelChange)="recherche.set($event)"
+        placeholder="Rechercher par nom, téléphone ou email..."
+        class="w-full pl-10 pr-4 py-2.5 bg-white border border-[var(--color-border-soft)] rounded-xl text-xs sm:text-sm focus:outline-none focus:border-[var(--color-primary)] shadow-xs"
+      />
+    </div>
+
+    @if (chargement()) {
+      <div class="rounded-2xl border border-[var(--color-border-soft)] bg-white p-12 text-center text-xs sm:text-sm text-[var(--color-text-muted)]">
+        Chargement des contacts...
+      </div>
+    } @else if (erreur()) {
+      <div class="rounded-2xl border border-red-200 bg-red-50 p-5 text-xs sm:text-sm text-red-700 flex items-center justify-center gap-3">
+        <app-icon name="alert-triangle" [size]="18" class="text-red-600" />
+        <span>{{ erreur() }}</span>
+      </div>
+    } @else if (contactsFiltres().length === 0) {
+      <div class="rounded-2xl border border-dashed border-[var(--color-border-soft)] bg-white p-12 text-center space-y-2">
+        <div class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 mx-auto mb-2">
+          <app-icon name="search" [size]="20" />
+        </div>
+        <p class="font-bold text-[var(--color-secondary)] text-sm">Aucun contact trouvé</p>
+        <p class="text-xs text-[var(--color-text-muted)]">Modifiez votre recherche pour trouver l'interlocuteur souhaité.</p>
+      </div>
+    } @else {
+      <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        @for (contact of contactsFiltres(); track contact.id) {
+          <article class="bg-white rounded-2xl border border-[var(--color-border-soft)] shadow-xs hover:shadow-md transition-all duration-200 p-5 flex flex-col justify-between group hover:translate-y-[-2px]">
+            <div class="flex items-start gap-3.5">
+              <div class="w-12 h-12 rounded-2xl bg-[var(--color-secondary)] text-[var(--color-primary-light)] text-sm font-extrabold flex items-center justify-center shrink-0 shadow-2xs">
+                {{ initiales(contact.nom) }}
+              </div>
+              <div class="min-w-0 flex-1">
+                <h2 class="text-sm font-bold text-[var(--color-secondary)] truncate group-hover:text-[var(--color-primary-dark)] transition-colors">{{ contact.nom }}</h2>
+                <span class="inline-flex items-center gap-1 mt-0.5 text-[10px] uppercase font-bold tracking-wider text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-100">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                  Partenaire vérifié
+                </span>
+              </div>
+            </div>
+
+            <div class="mt-5 pt-4 border-t border-[var(--color-border-soft)] space-y-2.5 text-xs">
+              <a
+                class="flex items-center justify-between p-2 rounded-lg bg-slate-50 hover:bg-orange-50 text-slate-700 hover:text-[var(--color-primary-dark)] transition-colors"
+                [href]="'tel:' + contact.telephone"
+                title="Appeler ce contact"
+              >
+                <span class="flex items-center gap-2 font-medium">
+                  <app-icon name="phone" [size]="14" class="text-slate-400" />
+                  <span>Téléphone</span>
+                </span>
+                <span class="font-bold font-mono text-[11px]">{{ contact.telephone }}</span>
+              </a>
+
+              <a
+                class="flex items-center justify-between p-2 rounded-lg bg-slate-50 hover:bg-orange-50 text-slate-700 hover:text-[var(--color-primary-dark)] transition-colors"
+                [href]="'mailto:' + contact.email"
+                title="Envoyer un email"
+              >
+                <span class="flex items-center gap-2 font-medium">
+                  <app-icon name="mail" [size]="14" class="text-slate-400" />
+                  <span>Email</span>
+                </span>
+                <span class="font-semibold text-[11px] truncate max-w-[170px]">{{ contact.email }}</span>
+              </a>
+            </div>
+          </article>
+        }
+      </div>
+    }
   </div>
-</div>
+</section>

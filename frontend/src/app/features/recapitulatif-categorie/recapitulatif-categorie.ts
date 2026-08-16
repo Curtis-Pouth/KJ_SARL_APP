@@ -1,18 +1,21 @@
 import { Component, OnInit, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { CategorieProduit, Produit } from '../../core/models/produit';
 import { ProduitService } from '../../core/services/produit';
+import { AppIcon } from '../../shared/components/icon/icon.component';
 
 const LIBELLES_CATEGORIES: Record<CategorieProduit, string> = {
-  eau: 'Eau',
-  biere: 'Bière',
-  emballage: 'Emballage',
-  jus: 'Jus',
+  eau: 'Eaux Minérales',
+  biere: 'Bières & Brassins',
+  emballage: 'Emballages & Casiers',
+  jus: 'Jus & Soft Drinks',
 };
 
 @Component({
   selector: 'app-recapitulatif-categorie',
-  imports: [RouterLink],
+  standalone: true,
+  imports: [CommonModule, RouterLink, AppIcon],
   templateUrl: './recapitulatif-categorie.html',
   styleUrl: './recapitulatif-categorie.css',
 })
@@ -47,7 +50,17 @@ export class RecapitulatifCategorie implements OnInit {
   }
 
   libelleCategorie(): string {
-    return LIBELLES_CATEGORIES[this.categorie()];
+    return LIBELLES_CATEGORIES[this.categorie()] ?? this.categorie();
+  }
+
+  iconeCategorie(): string {
+    switch (this.categorie()) {
+      case 'biere': return 'beer';
+      case 'jus': return 'cup-soda';
+      case 'eau': return 'droplet';
+      case 'emballage': return 'package';
+      default: return 'tag';
+    }
   }
 
   quantiteTotale(): number {

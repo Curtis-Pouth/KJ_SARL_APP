@@ -1,62 +1,127 @@
-<div class="max-w-3xl mx-auto mt-10 p-6 space-y-6">
-  <h2 class="text-2xl font-semibold text-[var(--color-secondary)]">Mon panier</h2>
+<div class="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+  <header class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[var(--color-border-soft)]">
+    <div>
+      <p class="text-xs font-bold uppercase tracking-[0.18em] text-[var(--color-primary-dark)]">Espace Commande Client</p>
+      <h1 class="text-2xl sm:text-3xl font-extrabold text-[var(--color-secondary)] mt-1">Mon panier d'achats</h1>
+      <p class="text-xs sm:text-sm text-[var(--color-text-muted)] mt-1">Vérifiez vos quantités avant de finaliser votre commande en ligne.</p>
+    </div>
+    <a routerLink="/catalogue" class="btn-outline inline-flex items-center gap-2 text-xs font-bold self-start sm:self-auto">
+      <app-icon name="arrow-left" [size]="14" />
+      <span>Continuer mes achats</span>
+    </a>
+  </header>
 
   @if (message()) {
-    <div class="bg-green-50 border border-green-200 text-green-700 rounded-md p-4">
-      {{ message() }}
-      <a routerLink="/catalogue" class="block mt-2 font-medium underline">Continuer mes achats</a>
+    <div class="bg-emerald-50 border border-emerald-300 text-emerald-800 rounded-2xl p-5 text-xs sm:text-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
+      <div class="flex items-center gap-3">
+        <app-icon name="check-circle" [size]="22" class="text-emerald-600 shrink-0" />
+        <span class="font-bold text-sm">{{ message() }}</span>
+      </div>
+      <a routerLink="/catalogue" class="btn-primary px-4 py-2 text-xs font-bold self-start sm:self-auto shadow-xs">
+        <span>Retourner au catalogue</span>
+      </a>
     </div>
   }
 
   @if (panierService.lignes().length === 0 && !message()) {
-    <div class="bg-white rounded-xl shadow-md p-8 text-center">
-      <p class="text-[var(--color-text-muted)] mb-4">Votre panier est vide.</p>
-      <a routerLink="/catalogue" class="inline-block px-6 py-2.5 rounded-md font-semibold text-white bg-[var(--color-secondary)] hover:bg-[var(--color-secondary-dark)] transition-colors">Parcourir le catalogue</a>
+    <div class="bg-white rounded-2xl border border-[var(--color-border-soft)] p-12 text-center shadow-xs space-y-4">
+      <div class="w-16 h-16 rounded-2xl bg-orange-50 border border-orange-100 flex items-center justify-center text-[var(--color-primary)] mx-auto">
+        <app-icon name="shopping-bag" [size]="28" />
+      </div>
+      <div class="space-y-1">
+        <h2 class="text-lg font-bold text-[var(--color-secondary)]">Votre panier est actuellement vide</h2>
+        <p class="text-xs text-[var(--color-text-muted)] max-w-sm mx-auto">
+          Explorez le catalogue des bières, boissons rafraîchissantes et emballages pour ajouter des articles.
+        </p>
+      </div>
+      <a routerLink="/catalogue" class="btn-primary inline-flex items-center gap-2 px-6 py-3 rounded-xl text-xs font-bold shadow-md">
+        <span>Parcourir le catalogue</span>
+        <app-icon name="arrow-right" [size]="14" />
+      </a>
     </div>
   } @else if (!message()) {
-    <div class="bg-white rounded-xl shadow-md overflow-hidden">
-      <table class="w-full text-left">
-        <thead class="bg-[var(--color-primary)] text-[var(--color-text)]">
-          <tr>
-            <th class="px-4 py-3">Produit</th>
-            <th class="px-4 py-3">Quantite</th>
-            <th class="px-4 py-3">Sous-total</th>
-            <th class="px-4 py-3"></th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (ligne of panierService.lignes(); track ligne.produit.id) {
-            <tr class="border-b border-[var(--color-border-soft)]">
-              <td class="px-4 py-3">
-                <p class="font-medium">{{ ligne.produit.libelle }}</p>
-                <p class="text-xs text-[var(--color-text-muted)]">{{ ligne.produit.prix_unitaire }} FCFA / unite</p>
-              </td>
-              <td class="px-4 py-3">
-                <div class="flex items-center border border-[var(--color-border-soft)] rounded-md w-fit">
-                  <button (click)="diminuer(ligne.produit.id, ligne.quantite)" class="px-3 py-1 text-lg font-bold text-[var(--color-secondary)] hover:bg-[var(--color-bg-alt)]">-</button>
-                  <span class="px-3 font-semibold">{{ ligne.quantite }}</span>
-                  <button (click)="augmenter(ligne.produit.id, ligne.quantite)" class="px-3 py-1 text-lg font-bold text-[var(--color-secondary)] hover:bg-[var(--color-bg-alt)]">+</button>
-                </div>
-              </td>
-              <td class="px-4 py-3 font-medium">{{ ligne.produit.prix_unitaire * ligne.quantite }} FCFA</td>
-              <td class="px-4 py-3 text-right">
-                <button (click)="retirer(ligne.produit.id)" class="text-red-600 hover:text-red-800 text-sm">Supprimer</button>
-              </td>
+    <div class="bg-white rounded-2xl border border-[var(--color-border-soft)] shadow-xs overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs sm:text-sm">
+          <thead>
+            <tr>
+              <th class="px-5 py-3.5">Désignation</th>
+              <th class="px-4 py-3.5">Quantité</th>
+              <th class="px-4 py-3.5">Sous-total</th>
+              <th class="px-5 py-3.5 text-right">Actions</th>
             </tr>
-          }
-        </tbody>
-      </table>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            @for (ligne of panierService.lignes(); track ligne.produit.id) {
+              <tr class="hover:bg-slate-50/80 transition-colors">
+                <td class="px-5 py-4">
+                  <p class="font-bold text-[var(--color-secondary)] text-sm">{{ ligne.produit.libelle }}</p>
+                  <p class="text-[11px] text-[var(--color-text-muted)] mt-0.5">{{ ligne.produit.prix_unitaire | currency:'XAF':'symbol':'1.0-0' }} / unité</p>
+                </td>
+                <td class="px-4 py-4">
+                  <div class="inline-flex items-center bg-slate-50 border border-[var(--color-border-soft)] rounded-xl overflow-hidden">
+                    <button
+                      type="button"
+                      (click)="diminuer(ligne.produit.id, ligne.quantite)"
+                      class="w-8 h-8 flex items-center justify-center text-[var(--color-secondary)] hover:bg-slate-200 transition-colors cursor-pointer"
+                      title="Diminuer"
+                    >
+                      <app-icon name="minus" [size]="12" />
+                    </button>
+                    <span class="w-10 text-center font-extrabold text-xs text-[var(--color-secondary)]">{{ ligne.quantite }}</span>
+                    <button
+                      type="button"
+                      (click)="augmenter(ligne.produit.id, ligne.quantite)"
+                      class="w-8 h-8 flex items-center justify-center text-[var(--color-secondary)] hover:bg-slate-200 transition-colors cursor-pointer"
+                      title="Augmenter"
+                    >
+                      <app-icon name="plus" [size]="12" />
+                    </button>
+                  </div>
+                </td>
+                <td class="px-4 py-4 font-extrabold text-sm text-[var(--color-primary-dark)]">
+                  {{ ligne.produit.prix_unitaire * ligne.quantite | currency:'XAF':'symbol':'1.0-0' }}
+                </td>
+                <td class="px-5 py-4 text-right">
+                  <button
+                    type="button"
+                    (click)="retirer(ligne.produit.id)"
+                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
+                  >
+                    <app-icon name="trash" [size]="14" />
+                    <span>Supprimer</span>
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
 
-      <div class="flex items-center justify-between p-5 bg-[var(--color-bg-alt)]">
-        <span class="text-lg font-semibold text-[var(--color-text)]">Total : {{ panierService.total() }} FCFA</span>
-        <button (click)="commander()" [disabled]="chargement()" class="px-6 py-2.5 rounded-md font-semibold text-white bg-[var(--color-secondary)] hover:bg-[var(--color-secondary-dark)] disabled:opacity-60 transition-colors">
-          {{ chargement() ? 'Envoi en cours...' : 'Valider la commande' }}
+      <div class="p-6 bg-slate-50/80 border-t border-[var(--color-border-soft)] flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div>
+          <p class="text-xs font-semibold text-[var(--color-text-muted)]">Montant total de votre panier</p>
+          <p class="text-2xl font-extrabold text-[var(--color-secondary)]">
+            {{ panierService.total() | currency:'XAF':'symbol':'1.0-0' }}
+          </p>
+        </div>
+        <button
+          type="button"
+          (click)="commander()"
+          [disabled]="chargement()"
+          class="btn-primary px-8 py-3 rounded-xl text-xs sm:text-sm font-bold shadow-md disabled:opacity-50 cursor-pointer"
+        >
+          <app-icon name="check" [size]="16" />
+          <span>{{ chargement() ? 'Envoi en cours...' : 'Valider et finaliser la commande' }}</span>
         </button>
       </div>
     </div>
 
     @if (erreur()) {
-      <p class="text-red-600 text-sm">{{ erreur() }}</p>
+      <div class="bg-red-50 border border-red-200 text-red-700 rounded-2xl p-4 text-xs sm:text-sm flex items-center gap-3">
+        <app-icon name="alert-circle" [size]="18" class="text-red-600 shrink-0" />
+        <span>{{ erreur() }}</span>
+      </div>
     }
   }
 </div>

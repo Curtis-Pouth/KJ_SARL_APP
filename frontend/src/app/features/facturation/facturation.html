@@ -1,75 +1,140 @@
-<div class="max-w-6xl mx-auto mt-10 p-6 space-y-6">
-  <h2 class="text-2xl font-semibold text-[var(--color-secondary)]">Facturation</h2>
+<div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+  <header class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[var(--color-border-soft)]">
+    <div>
+      <p class="text-xs font-bold uppercase tracking-[0.18em] text-[var(--color-primary-dark)]">Caisse commerciale & Ventes</p>
+      <h1 class="text-2xl sm:text-3xl font-extrabold text-[var(--color-secondary)] mt-1">Facturation & Enregistrement de vente</h1>
+      <p class="text-xs sm:text-sm text-[var(--color-text-muted)] mt-1">Établissez une facture proforma ou définitive avec calcul automatique des ristournes.</p>
+    </div>
+  </header>
 
   @if (message()) {
-    <div class="bg-green-50 border border-green-200 text-green-700 rounded-md p-4">{{ message() }}</div>
+    <div class="bg-emerald-50 border border-emerald-300 text-emerald-800 rounded-2xl p-4 text-xs sm:text-sm flex items-center gap-3 shadow-xs">
+      <app-icon name="check-circle" [size]="20" class="text-emerald-600 shrink-0" />
+      <span class="font-medium">{{ message() }}</span>
+    </div>
   }
   @if (erreur()) {
-    <div class="bg-red-50 border border-red-200 text-red-700 rounded-md p-4">{{ erreur() }}</div>
+    <div class="bg-red-50 border border-red-200 text-red-700 rounded-2xl p-4 text-xs sm:text-sm flex items-center gap-3 shadow-xs">
+      <app-icon name="alert-circle" [size]="20" class="text-red-600 shrink-0" />
+      <span>{{ erreur() }}</span>
+    </div>
   }
 
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-    <div class="lg:col-span-2 space-y-6">
-      <div class="bg-white rounded-xl shadow-md p-6">
-        <label class="text-sm font-semibold text-[var(--color-text-muted)] mb-1 block">Nom du client</label>
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+    <!-- LEFT COLUMN (COL-7) : CLIENT SELECTION & CATALOG -->
+    <div class="lg:col-span-7 space-y-6">
+      <!-- CLIENT SELECTION -->
+      <div class="bg-white rounded-2xl border border-[var(--color-border-soft)] shadow-xs p-5 sm:p-6 space-y-3">
+        <label class="text-xs font-bold uppercase tracking-wider text-[var(--color-secondary)] flex items-center gap-2">
+          <app-icon name="user" [size]="15" class="text-[var(--color-primary-dark)]" />
+          <span>Client destinataire</span>
+        </label>
+        
         <div class="relative">
+          <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] flex items-center">
+            <app-icon name="search" [size]="15" />
+          </span>
           <input
             type="text"
             [(ngModel)]="rechercheClient"
             (ngModelChange)="onRechercheClientChange()"
-            placeholder="Tapez le nom du client..."
-            class="w-full px-3 py-2 border border-[var(--color-border-soft)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30 focus:border-[var(--color-primary)]"
+            placeholder="Tapez le nom ou l'email du client..."
+            class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-[var(--color-border-soft)] rounded-xl text-xs sm:text-sm focus:outline-none focus:border-[var(--color-primary)] focus:bg-white"
           />
           @if (clientsTrouves().length > 0) {
-            <ul class="absolute z-10 w-full bg-white border border-[var(--color-border-soft)] rounded-md shadow-lg mt-1 max-h-48 overflow-y-auto">
+            <ul class="absolute z-20 w-full bg-white border border-[var(--color-border-soft)] rounded-xl shadow-xl mt-1.5 max-h-48 overflow-y-auto divide-y divide-slate-100">
               @for (client of clientsTrouves(); track client.id) {
                 <li
                   (click)="selectionnerClient(client)"
-                  class="px-3 py-2 text-sm hover:bg-[var(--color-bg-alt)] cursor-pointer"
+                  class="px-4 py-3 text-xs sm:text-sm hover:bg-orange-50/60 cursor-pointer flex items-center justify-between transition-colors"
                 >
-                  {{ client.nom }} <span class="text-[var(--color-text-muted)]">({{ client.email }})</span>
+                  <div class="flex items-center gap-2.5">
+                    <div class="w-7 h-7 rounded-full bg-[var(--color-secondary)] text-[var(--color-primary-light)] text-xs font-bold flex items-center justify-center">
+                      {{ client.nom.slice(0, 2).toUpperCase() }}
+                    </div>
+                    <span class="font-bold text-[var(--color-secondary)]">{{ client.nom }}</span>
+                  </div>
+                  <span class="text-[11px] text-[var(--color-text-muted)]">{{ client.email }}</span>
                 </li>
               }
             </ul>
           }
         </div>
+
         @if (clientSelectionne()) {
-          <p class="text-sm text-green-700 mt-2">Client selectionne : {{ clientSelectionne()!.nom }}</p>
+          <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold">
+            <app-icon name="user-check" [size]="15" class="text-emerald-600" />
+            <span>Client sélectionné : {{ clientSelectionne()!.nom }}</span>
+          </div>
         }
       </div>
 
-      <div class="bg-white rounded-xl shadow-md p-6">
-        <label class="text-sm font-semibold text-[var(--color-text-muted)] mb-1 block">Rechercher un produit</label>
-        <input
-          type="text"
-          [(ngModel)]="filtreProduit"
-          placeholder="Tapez une lettre pour filtrer..."
-          class="w-full px-3 py-2 mb-4 border border-[var(--color-border-soft)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30 focus:border-[var(--color-primary)]"
-        />
+      <!-- PRODUCT SELECTION -->
+      <div class="bg-white rounded-2xl border border-[var(--color-border-soft)] shadow-xs p-5 sm:p-6 space-y-4">
+        <div class="flex items-center justify-between">
+          <label class="text-xs font-bold uppercase tracking-wider text-[var(--color-secondary)] flex items-center gap-2">
+            <app-icon name="package" [size]="15" class="text-[var(--color-primary-dark)]" />
+            <span>Articles disponibles</span>
+          </label>
+          <span class="text-[11px] text-[var(--color-text-muted)]">{{ produitsFiltres().length }} référence(s)</span>
+        </div>
+
+        <div class="relative">
+          <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] flex items-center">
+            <app-icon name="search" [size]="15" />
+          </span>
+          <input
+            type="text"
+            [(ngModel)]="filtreProduit"
+            placeholder="Filtrer les produits par nom..."
+            class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-[var(--color-border-soft)] rounded-xl text-xs sm:text-sm focus:outline-none focus:border-[var(--color-primary)] focus:bg-white"
+          />
+        </div>
 
         @if (chargementProduits()) {
-          <p class="text-[var(--color-text-muted)] text-sm">Chargement...</p>
+          <div class="p-8 text-center text-xs text-[var(--color-text-muted)]">
+            Chargement des articles...
+          </div>
         } @else {
-          <div class="max-h-80 overflow-y-auto space-y-1">
+          <div class="max-h-[380px] overflow-y-auto space-y-2 pr-1">
             @for (produit of produitsFiltres(); track produit.id) {
               <div
-                class="flex items-center justify-between px-3 py-2 rounded-md"
+                class="flex items-center justify-between p-3 rounded-xl border transition-all"
                 [class.bg-red-50]="produit.stock_epuise"
-                [class.hover:bg-gray-50]="!produit.stock_epuise"
+                [class.border-red-200]="produit.stock_epuise"
+                [class.border-slate-100]="!produit.stock_epuise"
+                [class.hover:bg-slate-50]="!produit.stock_epuise"
               >
-                <div>
-                  <span class="text-sm font-medium">{{ produit.libelle }}</span>
-                  <span class="text-xs text-[var(--color-text-muted)] ml-2">{{ produit.prix_unitaire }} FCFA</span>
-                  @if (produit.stock_epuise) {
-                    <span class="ml-2 text-xs px-2 py-0.5 rounded-full bg-red-100 text-red-700">Stock epuise</span>
-                  }
+                <div class="min-w-0 pr-3">
+                  <div class="flex items-center gap-2">
+                    <span class="text-xs sm:text-sm font-bold text-[var(--color-secondary)] truncate">{{ produit.libelle }}</span>
+                    @if (produit.stock_epuise) {
+                      <span class="inline-flex items-center gap-1 px-2 py-0.2 rounded-full bg-red-100 text-red-700 text-[10px] font-bold">
+                        <app-icon name="alert-circle" [size]="10" />
+                        Épuisé
+                      </span>
+                    }
+                  </div>
+                  <div class="flex items-center gap-3 text-[11px] text-[var(--color-text-muted)] mt-0.5">
+                    <span class="font-bold text-[var(--color-primary-dark)]">{{ produit.prix_unitaire | currency:'XAF':'symbol':'1.0-0' }}</span>
+                    <span>·</span>
+                    <span>Stock : {{ produit.quantite_en_stock }}</span>
+                  </div>
                 </div>
+
                 <button
+                  type="button"
                   (click)="ajouterLigne(produit)"
                   [disabled]="produit.stock_epuise"
-                  class="px-3 py-1 rounded-md text-xs font-medium text-white bg-[var(--color-secondary)] hover:bg-[var(--color-secondary-dark)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                  class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-white bg-[var(--color-secondary)] hover:bg-[var(--color-secondary-dark)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors shrink-0 shadow-2xs cursor-pointer"
                 >
-                  Ajouter{{ quantiteDansLignes(produit.id) > 0 ? ' (' + quantiteDansLignes(produit.id) + ')' : '' }}
+                  <app-icon name="plus" [size]="13" />
+                  <span>Ajouter</span>
+                  @if (quantiteDansLignes(produit.id) > 0) {
+                    <span class="ml-1 px-1.5 py-0.2 rounded-full bg-[var(--color-primary)] text-white text-[10px]">
+                      {{ quantiteDansLignes(produit.id) }}
+                    </span>
+                  }
                 </button>
               </div>
             }
@@ -78,59 +143,160 @@
       </div>
     </div>
 
-    <div class="space-y-6">
-      <div class="bg-white rounded-xl shadow-md p-6">
-        <h3 class="text-lg font-medium text-[var(--color-text)] mb-4">Articles selectionnes</h3>
+    <!-- RIGHT COLUMN (COL-5) : INVOICE SUMMARY & PAYMENT SPLIT -->
+    <div class="lg:col-span-5 space-y-6">
+      <!-- SUMMARY -->
+      <div class="bg-white rounded-2xl border border-[var(--color-border-soft)] shadow-xs p-5 sm:p-6 space-y-4">
+        <div class="flex items-center justify-between pb-3 border-b border-[var(--color-border-soft)]">
+          <div class="flex items-center gap-2">
+            <app-icon name="receipt" [size]="17" class="text-[var(--color-primary-dark)]" />
+            <h2 class="text-sm font-bold text-[var(--color-secondary)]">Panier de facturation</h2>
+          </div>
+          <span class="px-2 py-0.5 rounded-md bg-slate-100 text-[11px] font-bold text-slate-700">
+            {{ lignes().length }} ligne(s)
+          </span>
+        </div>
 
         @if (lignes().length === 0) {
-          <p class="text-sm text-[var(--color-text-muted)]">Aucun produit selectionne.</p>
+          <div class="py-8 text-center text-xs text-[var(--color-text-muted)] space-y-1">
+            <app-icon name="receipt" [size]="24" class="mx-auto text-slate-300 mb-1" />
+            <p>Aucun article sélectionné.</p>
+          </div>
         } @else {
-          <div class="space-y-2 mb-4">
+          <div class="space-y-2.5 max-h-52 overflow-y-auto pr-1 divide-y divide-slate-100">
             @for (ligne of lignes(); track ligne.produit.id) {
-              <div class="flex items-center justify-between text-sm border-b border-[var(--color-border-soft)] pb-2">
-                <span class="flex-1">{{ ligne.produit.libelle }}</span>
-                <input
-                  type="number"
-                  min="1"
-                  [ngModel]="ligne.quantite"
-                  (ngModelChange)="modifierQuantiteLigne(ligne.produit.id, $event)"
-                  class="w-14 px-1 py-0.5 border border-[var(--color-border-soft)] rounded text-center mx-2"
-                />
-                <button (click)="retirerLigne(ligne.produit.id)" class="text-red-600 hover:text-red-800 text-xs">X</button>
+              <div class="flex items-center justify-between pt-2.5 text-xs sm:text-sm">
+                <div class="min-w-0 pr-2">
+                  <p class="truncate font-semibold text-[var(--color-secondary)]">{{ ligne.produit.libelle }}</p>
+                  <p class="text-[10px] text-[var(--color-text-muted)]">{{ ligne.produit.prix_unitaire * ligne.quantite }} FCFA</p>
+                </div>
+                <div class="flex items-center gap-2 shrink-0">
+                  <input
+                    type="number"
+                    min="1"
+                    [ngModel]="ligne.quantite"
+                    (ngModelChange)="modifierQuantiteLigne(ligne.produit.id, $event)"
+                    class="w-16 px-2 py-1 bg-slate-50 border border-[var(--color-border-soft)] rounded-lg text-center font-bold text-xs focus:outline-none focus:border-[var(--color-primary)]"
+                  />
+                  <button
+                    type="button"
+                    (click)="retirerLigne(ligne.produit.id)"
+                    class="w-7 h-7 rounded-lg text-red-500 hover:text-white hover:bg-red-500 flex items-center justify-center transition-colors cursor-pointer"
+                    title="Supprimer la ligne"
+                  >
+                    <app-icon name="trash" [size]="14" />
+                  </button>
+                </div>
               </div>
             }
           </div>
         }
 
-        <div class="text-sm space-y-1 border-t border-[var(--color-border-soft)] pt-3">
-          <div class="flex justify-between"><span>Montant HT</span><span>{{ montantHt() }} FCFA</span></div>
-          <div class="flex justify-between text-[var(--color-text-muted)]"><span>Ristourne (2%)</span><span>- {{ ristourne() }} FCFA</span></div>
-          <div class="flex justify-between font-bold text-[var(--color-secondary)] text-base"><span>Montant TTC</span><span>{{ montantTtc() }} FCFA</span></div>
+        <div class="space-y-2 border-t border-[var(--color-border-soft)] pt-3 text-xs">
+          <div class="flex justify-between text-slate-600">
+            <span>Montant Brut HT</span>
+            <span class="font-semibold">{{ montantHt() | currency:'XAF':'symbol':'1.0-0' }}</span>
+          </div>
+          <div class="flex justify-between text-emerald-700">
+            <span>Ristourne commerciale (2%)</span>
+            <span class="font-semibold">- {{ ristourne() | currency:'XAF':'symbol':'1.0-0' }}</span>
+          </div>
+          <div class="flex justify-between text-sm font-extrabold text-[var(--color-secondary)] pt-2 border-t border-dashed border-slate-200">
+            <span>Montant Net TTC</span>
+            <span class="text-base text-[var(--color-primary-dark)]">{{ montantTtc() | currency:'XAF':'symbol':'1.0-0' }}</span>
+          </div>
         </div>
       </div>
 
-      <div class="bg-white rounded-xl shadow-md p-6">
-        <h3 class="text-lg font-medium text-[var(--color-text)] mb-4">Methode de paiement</h3>
+      <!-- PAYMENT BREAKDOWN -->
+      <div class="bg-white rounded-2xl border border-[var(--color-border-soft)] shadow-xs p-5 sm:p-6 space-y-4">
+        <div class="flex items-center gap-2 pb-3 border-b border-[var(--color-border-soft)]">
+          <app-icon name="credit-card" [size]="17" class="text-[var(--color-primary-dark)]" />
+          <h2 class="text-sm font-bold text-[var(--color-secondary)]">Encaissement & Répartition</h2>
+        </div>
 
-        <label class="text-xs font-semibold text-[var(--color-text-muted)]">MTN Mobile Money</label>
-        <input type="number" [(ngModel)]="montantMtn" placeholder="0" class="w-full px-3 py-2 mb-3 border border-[var(--color-border-soft)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30 focus:border-[var(--color-primary)]" />
+        <div class="space-y-3">
+          <!-- MTN MONEY -->
+          <div>
+            <label class="text-xs font-bold text-slate-700 flex items-center justify-between mb-1">
+              <span class="flex items-center gap-1.5 text-amber-800">
+                <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                MTN Mobile Money
+              </span>
+              <span class="text-[10px] text-slate-400 font-normal">FCFA</span>
+            </label>
+            <input
+              type="number"
+              [(ngModel)]="montantMtn"
+              placeholder="0"
+              class="w-full px-3.5 py-2 bg-slate-50 border border-[var(--color-border-soft)] rounded-xl text-xs sm:text-sm font-semibold focus:outline-none focus:border-amber-500"
+            />
+          </div>
 
-        <label class="text-xs font-semibold text-[var(--color-text-muted)]">Orange Money</label>
-        <input type="number" [(ngModel)]="montantOrange" placeholder="0" class="w-full px-3 py-2 mb-3 border border-[var(--color-border-soft)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30 focus:border-[var(--color-primary)]" />
+          <!-- ORANGE MONEY -->
+          <div>
+            <label class="text-xs font-bold text-slate-700 flex items-center justify-between mb-1">
+              <span class="flex items-center gap-1.5 text-orange-800">
+                <span class="w-2 h-2 rounded-full bg-orange-500"></span>
+                Orange Money
+              </span>
+              <span class="text-[10px] text-slate-400 font-normal">FCFA</span>
+            </label>
+            <input
+              type="number"
+              [(ngModel)]="montantOrange"
+              placeholder="0"
+              class="w-full px-3.5 py-2 bg-slate-50 border border-[var(--color-border-soft)] rounded-xl text-xs sm:text-sm font-semibold focus:outline-none focus:border-orange-500"
+            />
+          </div>
 
-        <label class="text-xs font-semibold text-[var(--color-text-muted)]">Caisse (especes)</label>
-        <input type="number" [(ngModel)]="montantCaisse" placeholder="0" class="w-full px-3 py-2 mb-3 border border-[var(--color-border-soft)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30 focus:border-[var(--color-primary)]" />
+          <!-- CAISSE -->
+          <div>
+            <label class="text-xs font-bold text-slate-700 flex items-center justify-between mb-1">
+              <span class="flex items-center gap-1.5 text-emerald-800">
+                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                Caisse (espèces)
+              </span>
+              <span class="text-[10px] text-slate-400 font-normal">FCFA</span>
+            </label>
+            <input
+              type="number"
+              [(ngModel)]="montantCaisse"
+              placeholder="0"
+              class="w-full px-3.5 py-2 bg-slate-50 border border-[var(--color-border-soft)] rounded-xl text-xs sm:text-sm font-semibold focus:outline-none focus:border-emerald-500"
+            />
+          </div>
+        </div>
 
-        <p class="text-xs text-[var(--color-text-muted)] mb-4">
-          Total saisi : {{ totalPaiementSaisi() }} FCFA (doit egaler {{ montantTtc() }} FCFA)
-        </p>
+        <div
+          class="p-3.5 rounded-xl border text-xs font-semibold flex items-center justify-between"
+          [class.bg-emerald-50]="totalPaiementSaisi() === montantTtc() && montantTtc() > 0"
+          [class.border-emerald-200]="totalPaiementSaisi() === montantTtc() && montantTtc() > 0"
+          [class.text-emerald-900]="totalPaiementSaisi() === montantTtc() && montantTtc() > 0"
+          [class.bg-slate-50]="totalPaiementSaisi() !== montantTtc() || montantTtc() === 0"
+          [class.border-slate-200]="totalPaiementSaisi() !== montantTtc() || montantTtc() === 0"
+        >
+          <span>Total encaissé : {{ totalPaiementSaisi() }} FCFA</span>
+          <span class="text-[11px] font-bold">
+            @if (totalPaiementSaisi() === montantTtc() && montantTtc() > 0) {
+              <span class="inline-flex items-center gap-1 text-emerald-700">
+                <app-icon name="check" [size]="14" />
+                Équilibré
+              </span>
+            } @else {
+              <span class="text-amber-700">Doit égaler {{ montantTtc() }} FCFA</span>
+            }
+          </span>
+        </div>
 
         <button
+          type="button"
           (click)="soumettre()"
-          [disabled]="chargement()"
-          class="w-full py-2.5 rounded-md font-semibold text-white bg-[var(--color-secondary)] hover:bg-[var(--color-secondary-dark)] disabled:opacity-60 transition-colors"
+          [disabled]="chargement() || !clientSelectionne() || lignes().length === 0"
+          class="btn-primary w-full py-3 rounded-xl text-xs sm:text-sm font-bold shadow-md disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
         >
-          {{ chargement() ? 'Enregistrement...' : 'Enregistrer la facture' }}
+          <app-icon name="check" [size]="16" />
+          <span>{{ chargement() ? 'Validation de la facture...' : 'Enregistrer la facture' }}</span>
         </button>
       </div>
     </div>

@@ -1,11 +1,14 @@
 import { Component, OnInit, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../core/services/auth';
+import { AppIcon } from '../../shared/components/icon/icon.component';
 
 @Component({
   selector: 'app-password-reset-confirm',
-  imports: [FormsModule],
+  standalone: true,
+  imports: [CommonModule, FormsModule, RouterLink, AppIcon],
   templateUrl: './password-reset-confirm.html',
   styleUrl: './password-reset-confirm.css',
 })

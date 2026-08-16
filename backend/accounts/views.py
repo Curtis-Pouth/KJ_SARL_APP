@@ -98,11 +98,15 @@ class LoginView(APIView):
         utilisateur = serializer.validated_data['utilisateur']
         refresh = RefreshToken.for_user(utilisateur)
 
+        role = utilisateur.role or (
+            Utilisateur.Role.ADMINISTRATEUR if utilisateur.is_superuser else ''
+        )
+
         return Response(
             {
                 "token": str(refresh.access_token),
                 "refresh": str(refresh),
-                "role": utilisateur.role,
+                "role": role,
                 "utilisateur": UtilisateurSerializer(utilisateur).data,
             },
             status=status.HTTP_200_OK,

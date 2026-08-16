@@ -1,10 +1,13 @@
 import { Component, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { PanierService } from '../../core/services/panier';
+import { AppIcon } from '../../shared/components/icon/icon.component';
 
 @Component({
   selector: 'app-panier',
-  imports: [RouterLink],
+  standalone: true,
+  imports: [CommonModule, RouterLink, AppIcon],
   templateUrl: './panier.html',
   styleUrl: './panier.css',
 })

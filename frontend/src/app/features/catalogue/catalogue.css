@@ -1,0 +1,27 @@
+.cat-filter-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 0.85rem;
+  border-radius: 10px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  border: 1px solid var(--color-border-soft);
+  background: #ffffff;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: all 160ms ease;
+}
+
+.cat-filter-btn:hover {
+  border-color: var(--color-secondary);
+  color: var(--color-secondary);
+  background: #f8fafc;
+}
+
+.cat-filter-btn.active {
+  border-color: var(--color-secondary);
+  background: var(--color-secondary);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(16, 42, 67, 0.18);
+}

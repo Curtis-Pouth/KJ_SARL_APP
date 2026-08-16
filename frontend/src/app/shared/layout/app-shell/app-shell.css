@@ -1,0 +1,23 @@
+:host {
+  display: block;
+  min-height: 100dvh;
+}
+
+.app-shell {
+  background: var(--color-bg-alt);
+}
+
+.app-content {
+  min-width: 0;
+}
+
+@media (max-width: 768px) {
+  .app-shell {
+    height: auto;
+    min-height: 100dvh;
+  }
+
+  .app-content {
+    overflow-y: visible;
+  }
+}

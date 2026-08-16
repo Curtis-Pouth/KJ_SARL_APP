@@ -1,9 +1,11 @@
 import { Component, OnInit, computed, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Produit } from '../../core/models/produit';
 import { ProduitService } from '../../core/services/produit';
 import { ClientRecherche } from '../../core/models/facturation';
 import { FacturationService } from '../../core/services/facturation';
+import { AppIcon } from '../../shared/components/icon/icon.component';
 
 interface LigneFacture {
   produit: Produit;
@@ -14,7 +16,8 @@ const RISTOURNE_TAUX = 0.02;
 
 @Component({
   selector: 'app-facturation',
-  imports: [FormsModule],
+  standalone: true,
+  imports: [CommonModule, FormsModule, AppIcon],
   templateUrl: './facturation.html',
   styleUrl: './facturation.css',
 })
@@ -139,16 +142,16 @@ export class Facturation implements OnInit {
 
     const client = this.clientSelectionne();
     if (!client) {
-      this.erreur.set('Merci de selectionner un client.');
+      this.erreur.set('Merci de sélectionner un client dans la liste.');
       return;
     }
     if (this.lignes().length === 0) {
-      this.erreur.set('Merci de selectionner au moins un produit.');
+      this.erreur.set('Merci de sélectionner au moins un produit.');
       return;
     }
     if (this.totalPaiementSaisi() !== this.montantTtc()) {
       this.erreur.set(
-        `La somme des montants payes (${this.totalPaiementSaisi()} FCFA) doit correspondre au montant TTC (${this.montantTtc()} FCFA).`
+        `La somme des montants saisis (${this.totalPaiementSaisi()} FCFA) doit être rigoureusement égale au montant TTC (${this.montantTtc()} FCFA).`
       );
       return;
     }
@@ -164,14 +167,14 @@ export class Facturation implements OnInit {
       })
       .subscribe({
         next: () => {
-          this.message.set(`Facture creee avec succes pour ${client.nom}.`);
+          this.message.set(`Facture créée avec succès pour le client ${client.nom}.`);
           this.reinitialiser();
           this.chargement.set(false);
         },
         error: (err) => {
           const detail =
             err.error?.lignes?.[0] || err.error?.montant_mtn?.[0] || err.error?.client_id?.[0];
-          this.erreur.set(detail || "Erreur lors de la creation de la facture.");
+          this.erreur.set(detail || "Erreur lors de la création de la facture.");
           this.chargement.set(false);
         },
       });

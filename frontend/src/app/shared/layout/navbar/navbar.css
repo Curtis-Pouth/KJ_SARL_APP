@@ -1,0 +1,123 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
+.app-nav {
+  width: 248px;
+  background: #102a43;
+  box-shadow: 12px 0 32px rgba(16, 42, 67, 0.14);
+}
+
+.app-brand-mark {
+  display: inline-flex;
+  width: 40px;
+  height: 40px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: var(--color-primary);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.app-nav-section {
+  margin: 1.25rem 1.25rem 0.45rem;
+  color: rgba(255, 255, 255, 0.38);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.app-nav-link {
+  display: flex;
+  min-height: 46px;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0 10px;
+  padding: 0 14px;
+  border-left: 3px solid transparent;
+  border-radius: 10px;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.83rem;
+  text-decoration: none;
+  transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease;
+}
+
+.app-nav-link:hover,
+.app-nav-link.router-link-active {
+  color: white;
+}
+
+.app-nav-icon {
+  display: inline-flex;
+  width: 28px;
+  height: 28px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 9px;
+  color: rgba(255, 255, 255, 0.58);
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.app-nav-icon svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.app-nav-link.is-active {
+  background: rgba(255, 118, 87, 0.16) !important;
+  border-left-color: #ff7657 !important;
+}
+
+.app-nav-link.is-active .app-nav-icon { color: var(--color-primary-light); }
+.app-nav-profile-active { background: rgba(255, 255, 255, 0.06); }
+.app-nav-logout { width: calc(100% - 20px); margin-bottom: 10px; }
+
+@media (max-width: 768px) {
+  .app-nav {
+    width: 76px;
+  }
+
+  .app-nav-profile,
+  .app-nav-link {
+    justify-content: center;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+
+  .app-nav-profile-label,
+  .app-nav-link > span:last-child {
+    display: none;
+  }
+
+  .app-nav-section {
+    display: none;
+  }
+
+  .app-nav-list {
+    padding-top: 1rem;
+  }
+
+  .app-nav-link {
+    width: 56px;
+    margin-right: auto;
+    margin-left: auto;
+    padding: 0;
+    border-left-width: 0;
+  }
+
+  .app-nav-link.is-active {
+    border-left-width: 0 !important;
+    box-shadow: inset 3px 0 var(--color-primary);
+  }
+}
